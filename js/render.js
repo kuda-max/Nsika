@@ -108,4 +108,3 @@ export function renderMy(){
 		? list.map(v=>vCard(v,true)).join('')
 		: `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-4 7 4v11"/></svg><div>No listings yet. Add your first shop.</div></div>`;
 }
-
