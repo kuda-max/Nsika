@@ -3,7 +3,7 @@ import { $ } from './utils.js';
 import { renderHome, renderExplore, renderMy, renderProfile } from './render.js';
 import { getOwnerId } from './utils.js';
 
-export const screens = { home:'home', explore:'explore', profile:'profile', add:'add', my:'my' };
+export const screens = { home:'home', explore:'explore', profile:'profile', add:'add', my:'my',register:'register' };
 export function go(name){
   if(name==='profile' && !state.currentProfileId) return;
   Object.values(screens).forEach(s=> $('#screen-'+s).classList.remove('active'));
@@ -11,7 +11,7 @@ export function go(name){
   state.prevScreen = state.currentScreen; state.currentScreen = name;
 
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(['home','explore','add','my'].includes(name)) $('#nav-'+name).classList.add('active');
+  if(['home','explore','add','my',"register"].includes(name)) $('#nav-'+name).classList.add('active');
 
   const backBtn = $('#header-back');
   const editBtn = $('#header-edit');
