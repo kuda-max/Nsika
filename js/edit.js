@@ -2,6 +2,8 @@ import { state } from './state.js';
 import { $ } from './utils.js';
 import { supabase } from './supabase.js';
 import { showToast } from './ui.js';
+import { load } from "./storage.js";
+import { renderHome, renderMy, renderProfile } from "./render.js";
 
 async function getUser(){
 	const { data:{user} } = await supabase.auth.getUser();
@@ -51,21 +53,57 @@ export function closeEdit(){
 	$('#edit-sheet').classList.remove('open');
 }
 
-export function saveEdit(e){
-	e.preventDefault();
-	const d = Object.fromEntries(new FormData(e.target).entries());
-	const v = state.vendors.find(x=>x.id===d.id);
-	if(!v || v.ownerId !== localStorage.getItem('nsika_owner_id')){ closeEdit(); return; }
-	v.name=d.name.trim(); v.phone=d.phone.trim(); v.whatsapp=d.whatsapp.trim();
-	v.category=d.category; v.town=d.town.trim(); v.area=d.town.trim(); v.description=d.description.trim();
-	save(); closeEdit(); showToast('Listing updated');
-	if(state.currentScreen==='my') {
-		if(window.renderMy) window.renderMy();
-		else if(window.go) window.go('my');
-	}
-	if(state.currentScreen==='profile') {
-		if(window.renderProfile) window.renderProfile(v.id);
-	}
+export async function saveEdit(event) {
+
+    event.preventDefault();
+
+    const form = event.target;
+
+    const id = form.id.value;
+
+    const updates = {
+
+        name: form.name.value.trim(),
+
+        phone: form.phone.value.trim(),
+
+        whatsapp: form.whatsapp.value.trim(),
+
+        category_id: form.category.value,
+
+        town: form.town.value.trim(),
+
+        area: form.town.value.trim(),
+
+        description: form.description.value.trim()
+
+    };
+
+    const { error } = await supabase
+        .from("businesses")
+        .update(updates)
+        .eq("id", id);
+
+    if (error) {
+
+        console.error(error);
+        alert(error.message);
+        return;
+
+    }
+
+    await load();
+
+    renderHome();
+
+    renderMy();
+
+    renderProfile(id);
+
+    closeEdit();
+
+    showToast("Business updated!");
+
 }
 
 export function deleteListing(){

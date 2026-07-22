@@ -42,3 +42,4 @@ export function mapVendorRow(row){
 		ownerId: row.owner_id || null
 	};
 }
+
