@@ -2,16 +2,18 @@ import { state } from './state.js';
 import { $, esc, makePlaceholder, timeAgo } from './utils.js';
 
 export function catCard(c){
-	return `<div class="cat-card" onclick="pickCategory('${c.id}')">
-		<svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${c.icon}</svg>
+	return `
+	<div class="cat-card" onclick="pickCategory('${c.id}')">
+		<div class="cat-icon">
+			${c.icon || "📌"}
+		</div>
 		<span>${c.name}</span>
 	</div>`;
 }
-
 export function renderCategories(){ $('#cat-grid').innerHTML = state.cats.map(catCard).join(''); }
 
 export function vCard(v, editable=false){
-	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
+	const cat = {name: v.categoryName || 'Vendor'};
 	const img = v.photoUrls[0] || makePlaceholder(v.name, 0);
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
 	const phone = v.phone.replace(/\D/g,'');
@@ -35,7 +37,7 @@ export function filteredVendors(q, town, cat){
  q = (q||'').toLowerCase();
 	return state.vendors.filter(v=>v.isActive).filter(v=>{
 		const matchTown = town==='All' || (v.town+' '+v.area).toLowerCase().includes(town.toLowerCase());
-		const matchQ = !q || (v.name+' '+v.description+' '+v.category).toLowerCase().includes(q);
+		const matchQ = !q || (v.name +' ' +v.description +' ' +(v.categoryName || '')).toLowerCase().includes(q);
 		const matchCat = !cat || v.category===cat;
 		return matchTown && matchQ && matchCat;
 	}).sort((a,b)=>b.createdAt - a.createdAt);

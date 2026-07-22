@@ -122,8 +122,23 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 
 /* Categories */
 .cat-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 20px;
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding-bottom: 8px; /* Extra space so scrollbars or shadows aren't cut off */
+  
+  /* Enables soft snapping for each item (optional but recommended) */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
+
+/* Ensure child elements don't shrink and snap nicely */
+.cat-grid > * {
+  flex: 0 0 auto; /* Prevents items from squeezing to fit */
+  scroll-snap-align: start;
+}
+
 .cat-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 18px 8px; text-align: center; cursor: pointer;
