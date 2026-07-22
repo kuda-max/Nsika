@@ -1,0 +1,8 @@
+✅ Finish the responsive UI (done)
+⭐ Polish the vendor profile
+⭐ Improve search and filtering
+⭐ Add maps/location
+⭐ Move to a real backend
+⭐ User accounts
+⭐ Favorites
+⭐ Ratings and reviews (optional)

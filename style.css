@@ -182,7 +182,7 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
   border: 1px solid var(--border); display: block; margin-bottom: 16px;
   background: var(--bg);
 }
-.profile-title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; }
+.profile-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; margin-top: 20px}
 .profile-sub { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
 .profile-desc { font-size: 15px; line-height: 1.55; margin-bottom: 22px; }
 .profile-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
