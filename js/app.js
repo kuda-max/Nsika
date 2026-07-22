@@ -10,6 +10,12 @@ export async function init(){
 
 	renderCategories();
 	renderHome();
+
+	const { data, error } = await supabase.auth.getUser();
+
+if (error || !data.user) {
+    await supabase.auth.signOut();
+}
 }
 
 import { currentUser } from "./auth.js";
@@ -17,3 +23,5 @@ import { currentUser } from "./auth.js";
 const user = await currentUser();
 
 console.log(user);
+
+await supabase.auth.signOut();

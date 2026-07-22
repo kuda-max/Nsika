@@ -104,9 +104,32 @@ export function renderProfile(id){
 	`;
 }
 
-export function renderMy(){
-	const list = state.vendors.filter(v=>v.isActive && v.ownerId === localStorage.getItem('nsika_owner_id')).sort((a,b)=>b.createdAt - a.createdAt);
+import { supabase } from './supabase.js';
+
+export async function renderMy(){
+
+	const { data:{user} } = await supabase.auth.getUser();
+
+	if(!user){
+		$('#my-list').innerHTML = `
+			<div class="empty">
+				Please login to view your business.
+			</div>`;
+		return;
+	}
+
+
+	const list = state.vendors
+		.filter(v=>v.isActive && v.ownerId === user.id)
+		.sort((a,b)=>b.createdAt - a.createdAt);
+
+
 	$('#my-list').innerHTML = list.length
 		? list.map(v=>vCard(v,true)).join('')
-		: `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-4 7 4v11"/></svg><div>No listings yet. Add your first shop.</div></div>`;
+		: `<div class="empty">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M3 21h18M5 21V10l7-4 7 4v11"/>
+			</svg>
+			<div>No listings yet. Add your first shop.</div>
+		</div>`;
 }

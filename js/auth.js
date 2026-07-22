@@ -1,4 +1,7 @@
 import { supabase } from "./supabase.js";
+import { load } from "./storage.js";
+import { renderHome, renderMy } from "./render.js";
+import { showToast } from "./ui.js";
 
 export async function signUp(email, password) {
     const { data, error } = await supabase.auth.signUp({
@@ -28,4 +31,22 @@ export async function currentUser() {
     } = await supabase.auth.getUser();
 
     return user;
+}
+
+
+export async function logout() {
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        showToast("Error signing out: " + error.message);
+        return;
+    }
+
+    await load();
+
+    renderHome();
+    await renderMy();
+
+    window.go("home");
 }

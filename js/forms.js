@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { uid, makePlaceholder, $ } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
+import { load } from "./storage.js";
 import { supabase } from "./supabase.js";
 
 export function populateSelect(elId, selected=''){
@@ -9,27 +10,27 @@ export function populateSelect(elId, selected=''){
 	sel.innerHTML = '<option value="">Pick a category</option>' + state.cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.name}</option>`).join('');
 }
 
-// export function handlePhoto(input, idx){
-// 	if(!input.files || !input.files[0]) return;
-// 	const slot = input.parentElement;
-// 	const reader = new FileReader();
-// 	reader.onload = e => {
-// 		const img = new Image();
-// 		img.onload = () => {
-// 			const c = document.createElement('canvas'), x = c.getContext('2d');
-// 			const w = 400, h = Math.round(img.height * (w/img.width));
-// 			c.width = w; c.height = h;
-// 			x.drawImage(img,0, 0, w, h);
-// 			const url = c.toDataURL('image/jpeg', 0.75);
-// 			let im = slot.querySelector('img');
-// 			if(!im){ im = document.createElement('img'); slot.appendChild(im); }
-// 			im.src = url; slot.classList.add('has-img'); slot.querySelector('svg').style.display='none';
-// 			state.signupPhotos[idx] = url;
-// 		};
-// 		img.src = e.target.result;
-// 	};
-// 	reader.readAsDataURL(input.files[0]);
-// }
+export function handlePhoto(input, idx){
+	if(!input.files || !input.files[0]) return;
+	const slot = input.parentElement;
+	const reader = new FileReader();
+	reader.onload = e => {
+		const img = new Image();
+		img.onload = () => {
+			const c = document.createElement('canvas'), x = c.getContext('2d');
+			const w = 400, h = Math.round(img.height * (w/img.width));
+			c.width = w; c.height = h;
+			x.drawImage(img,0, 0, w, h);
+			const url = c.toDataURL('image/jpeg', 0.75);
+			let im = slot.querySelector('img');
+			if(!im){ im = document.createElement('img'); slot.appendChild(im); }
+			im.src = url; slot.classList.add('has-img'); slot.querySelector('svg').style.display='none';
+			state.signupPhotos[idx] = url;
+		};
+		img.src = e.target.result;
+	};
+	reader.readAsDataURL(input.files[0]);
+}
 
 export async function submitVendor(event) {
   event.preventDefault();
@@ -43,7 +44,7 @@ export async function submitVendor(event) {
 
 
   if (userError || !user) {
-    alert("You must be logged in first");
+    showToast("You must be logged in to submit a business.");
     return;
   }
 
@@ -68,14 +69,14 @@ export async function submitVendor(event) {
 
   if (error) {
     console.error("Business creation error:", error);
-    alert(error.message);
+    showToast("Error creating business: " + error.message);
     return;
   }
 
 
   console.log("Business created:", data);
 
-  alert("Your business is now live!");
+  showToast("Your business is now live!");
 }
 
 export async function registerVendor(event) {
@@ -101,15 +102,62 @@ export async function registerVendor(event) {
 
   if (error) {
     console.error(error);
-    alert(error.message);
+    showToast("Error creating account: " + error.message);
     return;
   }
 
 
   console.log("Account created:", data);
-
-  alert("Account created. Now add your business details.");
+  console.log("User:", data.user);
+console.log("Session:", data.session);
+  showToast("Account created. Now add your business details.");
 
   // move to listing form
   window.go('add');
+}
+
+export async function loginVendor(event){
+
+    event.preventDefault();
+
+    const form = event.target;
+
+    const email = form.email.value.trim();
+    const password = form.password.value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+
+        email,
+        password
+
+    });
+
+    if(error){
+
+        showToast("Error signing in: " + error.message);
+        return;
+
+    }
+
+    console.log("Logged in:", data.user);
+
+    showToast("Welcome back!");
+
+    await load();
+
+    window.go("my");
+
+}
+
+export async function openAddListing() {
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      showToast("You must be logged in to add a business.");
+        window.go("login");
+        return;
+    }
+
+    window.go("add");
 }

@@ -1,19 +1,47 @@
 import { state } from './state.js';
 import { $ } from './utils.js';
-import { save } from './storage.js';
+import { supabase } from './supabase.js';
 import { showToast } from './ui.js';
 
-export function openEdit(id){
+async function getUser(){
+	const { data:{user} } = await supabase.auth.getUser();
+	return user;
+}
+
+export async function openEdit(id){
+
+	const { data:{user} } = await supabase.auth.getUser();
+
+	if(!user) return;
+
+
 	const v = state.vendors.find(x=>x.id===id);
-	if(!v || v.ownerId !== localStorage.getItem('nsika_owner_id')) return;
+
+
+	if(!v || v.ownerId !== user.id) return;
+
+
 	$('#edit-id').value = v.id;
 	$('#edit-name').value = v.name;
 	$('#edit-phone').value = v.phone;
 	$('#edit-whatsapp').value = v.whatsapp || '';
+
+
 	const sel = document.getElementById('edit-category');
-	sel.innerHTML = '<option value="">Pick a category</option>' + state.cats.map(c=>`<option value="${c.id}" ${v.category===c.id?'selected':''}>${c.name}</option>`).join('');
+
+	sel.innerHTML =
+	'<option value="">Pick a category</option>' +
+	state.cats.map(c=>
+	`<option value="${c.id}" ${v.category===c.id?'selected':''}>
+	${c.name}
+	</option>`
+	).join('');
+
+
 	$('#edit-town').value = v.town;
 	$('#edit-description').value = v.description;
+
+
 	$('#edit-overlay').classList.add('open');
 	$('#edit-sheet').classList.add('open');
 }

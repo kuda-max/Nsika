@@ -40,7 +40,7 @@ export async function load() {
 
     state.vendors = data.map(v => ({
         id: String(v.id),
-
+        ownerId: v.owner_id,
         name: v.name,
 
         phone: v.phone,
@@ -61,6 +61,7 @@ export async function load() {
 
         isActive: v.is_active
     }));
+
 }
 export function save() {
     // Temporary.
