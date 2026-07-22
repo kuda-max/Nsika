@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { $, esc, makePlaceholder, timeAgo } from './utils.js';
+import { $, esc, makePlaceholder, timeAgo,isOwner } from './utils.js';
 
 export function catCard(c){
 	return `
@@ -65,6 +65,10 @@ export function openProfile(id){ state.currentProfileId=id; if(window.go) window
 export function renderProfile(id){
 	const v = state.vendors.find(x=>x.id===id);
 	if(!v){ if(window.go) window.go('home'); return; }
+
+	const owner = isOwner(v);
+	console.log("Owner?", owner);
+
 	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
 	const photos = v.photoUrls.length ? v.photoUrls : [makePlaceholder(v.name,0)];

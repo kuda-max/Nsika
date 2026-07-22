@@ -2,6 +2,7 @@ import { supabase } from "./supabase.js";
 import { load } from "./storage.js";
 import { renderHome, renderMy } from "./render.js";
 import { showToast } from "./ui.js";
+import { state } from "./state.js";
 
 export async function signUp(email, password) {
     const { data, error } = await supabase.auth.signUp({
@@ -45,6 +46,7 @@ export async function logout() {
 
     await load();
 
+    state.user = null;
     renderHome();
     await renderMy();
 

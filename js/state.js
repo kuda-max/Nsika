@@ -1,6 +1,7 @@
 export const state = {
 	LS_KEY: 'nsika_v2_vendors',
 	cats: [],
+	user:null,
 	vendors: [],
 	currentScreen: 'home',
 	prevScreen: 'home',

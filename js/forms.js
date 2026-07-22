@@ -142,12 +142,6 @@ export async function loginVendor(event){
     console.log("Logged in:", data.user);
 
 const check = await supabase.auth.getSession();
-console.log("Session immediately after login:", check.data.session);
-
-console.log(
-  "Stored auth:",
-  localStorage.getItem("sb-xvnmzfetryxzcncmrttw-auth-token")
-);
 
     showToast("Welcome back!");
 

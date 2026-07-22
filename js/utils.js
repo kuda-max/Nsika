@@ -1,6 +1,7 @@
 export const $ = s => document.querySelector(s);
 export const esc = s => { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; };
 export const uid = () => Math.random().toString(36).slice(2)+Date.now().toString(36);
+import { state } from './state.js';
 
 export function getOwnerId(){
 	let id = localStorage.getItem('nsika_owner_id');
@@ -43,3 +44,15 @@ export function mapVendorRow(row){
 	};
 }
 
+
+
+
+export function isOwner(v){
+
+    return !!(
+        state.user &&
+        v &&
+        state.user.id === v.ownerId
+    );
+
+}
