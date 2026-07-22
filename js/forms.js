@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { uid, makePlaceholder, $ } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
+import { supabase } from "./supabase.js";
 
 export function populateSelect(elId, selected=''){
 	const sel = document.getElementById(elId);
@@ -53,3 +54,38 @@ export function submitVendor(e){
 	if(window.go) window.go('my');
 }
 
+export async function registerVendor(event) {
+  event.preventDefault();
+
+  const form = event.target;
+
+  const full_name = form.full_name.value;
+  const email = form.email.value;
+  const password = form.password.value;
+
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name
+      }
+    }
+  });
+
+
+  if (error) {
+    console.error(error);
+    alert(error.message);
+    return;
+  }
+
+
+  console.log("Account created:", data);
+
+  alert("Account created. Now add your business details.");
+
+  // move to listing form
+  window.go('add');
+}

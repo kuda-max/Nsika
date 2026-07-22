@@ -12,6 +12,7 @@ window.onSearch = search.onSearch;
 window.setTown = search.setTown;
 window.handlePhoto = forms.handlePhoto;
 window.submitVendor = forms.submitVendor;
+window.registerVendor = forms.registerVendor;
 window.openExploreAll = search.openExploreAll;
 window.pickCategory = search.pickCategory;
 window.populateSelect = forms.populateSelect;
@@ -29,6 +30,8 @@ window.closeEdit = edit.closeEdit;
 window.saveEdit = edit.saveEdit;
 window.deleteListing = edit.deleteListing;
 window.headerAction = edit.headerAction;
+
+
 
 // Initialize category select and boot app
 forms.populateSelect('signup-category');

@@ -8,16 +8,8 @@ export async function init(){
 	renderHome();
 }
 
-console.log("Client:", supabase);
-console.log("Has from:", typeof supabase.from);
+import { currentUser } from "./auth.js";
 
-async function testSupabase() {
-    const { data, error } = await supabase
-        .from("vendors")
-        .select("*");
+const user = await currentUser();
 
-    console.log("Data:", data);
-    console.log("Error:", error);
-}
-
-testSupabase();
+console.log(user);
