@@ -60,10 +60,14 @@ export async function saveEdit(event) {
 
     const form = event.target;
 
+	const { data:{user} } = await supabase.auth.getUser();
+
+    if(!user) {
+        showToast("Please login first");
+        return;
+    }
+
     const id = form.id.value;
-
-    const { data: { user } } = await supabase.auth.getUser();
-
 
     const updates = {
 
@@ -85,6 +89,7 @@ export async function saveEdit(event) {
         .update(updates)
         .eq("id", id)
         .eq("owner_id", user.id);
+		
 
 
     if(error){

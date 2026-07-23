@@ -30,4 +30,4 @@ export function go(name){
   if(name==='profile') renderProfile(state.currentProfileId);
 }
 
-export function back(){ if(state.currentScreen==='profile') go(state.prevScreen || 'home'); else go('home'); }
+export function back(){ if(state.currentScreen==='profile') go(state.prevScreen || 'home'); else go('home'); const pauseBtn = $('#header-pause'); pauseBtn.style.display = 'none'; }

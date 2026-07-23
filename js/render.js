@@ -73,6 +73,18 @@ if(editBtn){
     editBtn.style.display = owner ? '' : 'none';
 }
 
+const pauseBtn = $('#header-pause');
+
+if(pauseBtn){
+
+    pauseBtn.style.display = owner ? '' : 'none';
+    pauseBtn.innerHTML = v.isActive
+        ? '<i class="fa-solid fa-pause"></i>'
+        : '<i class="fa-solid fa-play"></i>';
+    pauseBtn.setAttribute('aria-label', v.isActive ? 'Pause listing' : 'Activate listing');
+
+}
+
 	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
 	const photos = v.photoUrls.length ? v.photoUrls : [makePlaceholder(v.name,0)];
