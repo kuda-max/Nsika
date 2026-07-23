@@ -67,7 +67,11 @@ export function renderProfile(id){
 	if(!v){ if(window.go) window.go('home'); return; }
 
 	const owner = isOwner(v);
-	console.log("Owner?", owner);
+const editBtn = $('#header-edit');
+
+if(editBtn){
+    editBtn.style.display = owner ? '' : 'none';
+}
 
 	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
