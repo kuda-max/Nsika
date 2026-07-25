@@ -26,7 +26,7 @@ export function renderEditImages(v){
     container.innerHTML = `
 
         <h4 style="margin-bottom:10px;">
-            Photos
+            Photos (${v.images.length}/5)
         </h4>
 
         <div class="edit-photo-grid">
@@ -131,6 +131,134 @@ console.log("DATABASE DELETE RESULT:", deleteError);
 
         console.error("Delete image error:", err);
         showToast("Could not delete photo");
+
+    }
+
+
+    hideLoader();
+
+}
+
+export async function handleEditPhotos(input){
+
+    const files = [...input.files];
+
+    if(!files.length) return;
+
+
+    const id = document.querySelector("#edit-id").value;
+
+    const vendor = state.vendors.find(
+        v => v.id === id
+    );
+
+
+    if(!vendor) return;
+
+
+    const currentCount = vendor.images?.length || 0;
+
+
+    if(currentCount + files.length > 5){
+
+        showToast(
+            `You can only have 5 photos maximum`
+        );
+
+        input.value = "";
+        return;
+
+    }
+
+
+    showLoader("Uploading photos...");
+
+
+    try{
+
+
+        for(let i=0;i<files.length;i++){
+
+            const compressed = await imageCompression(
+                files[i],
+                {
+                    maxSizeMB:0.3,
+                    maxWidthOrHeight:1280,
+                    useWebWorker:true,
+                    initialQuality:0.8
+                }
+            );
+
+
+            const ext = compressed.name.split(".").pop() || "jpg";
+
+
+            const path =
+                `${id}/${crypto.randomUUID()}.${ext}`;
+
+
+            const {error:uploadError} =
+                await supabase.storage
+                .from("business-images")
+                .upload(path, compressed);
+
+
+
+            if(uploadError)
+                throw uploadError;
+
+
+
+            const {data:urlData} =
+                supabase.storage
+                .from("business-images")
+                .getPublicUrl(path);
+
+
+
+            const {error:dbError} =
+                await supabase
+                .from("business_images")
+                .insert({
+
+                    business_id:id,
+
+                    image_url:urlData.publicUrl
+
+                });
+
+
+
+            if(dbError)
+                throw dbError;
+
+        }
+
+
+
+        await load();
+
+
+        const updatedVendor =
+            state.vendors.find(
+                v=>v.id===id
+            );
+
+
+        renderEditImages(updatedVendor);
+
+
+        showToast("Photos added");
+
+
+        input.value="";
+
+
+    }
+    catch(err){
+
+        console.error(err);
+        showToast("Upload failed");
 
     }
 

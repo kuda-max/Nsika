@@ -42,4 +42,11 @@ window.togglePause = edit.togglePause;
 
 window.removeBusinessImage = imageManager.removeBusinessImage;
 
+document
+.querySelector("#edit-photo-input")
+.addEventListener(
+    "change",
+    e=>  imageManager.handleEditPhotos(e.target)
+);
+
 init();
