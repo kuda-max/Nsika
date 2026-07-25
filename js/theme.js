@@ -5,6 +5,11 @@ export function effectiveTheme(){
 	if(attr) return attr;
 	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
+function updateThemeBadge(){
+	const badge = document.getElementById('settings-theme-pill');
+	if(badge) badge.textContent = effectiveTheme()==='dark' ? 'Dark' : 'Light';
+}
+
 export function applyTheme(t){
 	if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
 	else document.documentElement.setAttribute('data-theme','light');
@@ -13,6 +18,7 @@ export function applyTheme(t){
 	const sun = $('#icon-sun');
 	if(moon) moon.style.display = t==='dark' ? 'none':'block';
 	if(sun) sun.style.display = t==='dark' ? 'block':'none';
+	updateThemeBadge();
 }
 export function toggleTheme(){ applyTheme(effectiveTheme()==='dark' ? 'light':'dark'); }
 

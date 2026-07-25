@@ -3,7 +3,7 @@ import { $ } from './utils.js';
 import { renderHome, renderExplore, renderMy, renderProfile } from './render.js';
 import { getOwnerId } from './utils.js';
 
-export const screens = { home:'home', explore:'explore', profile:'profile', add:'add', my:'my',register:'register',login:'login' };
+export const screens = { home:'home', explore:'explore', profile:'profile', add:'add', my:'my',register:'register',login:'login', settings:'settings' };
 export function go(name){
   if(name==='profile' && !state.currentProfileId) return;
   Object.values(screens).forEach(s=> $('#screen-'+s).classList.remove('active'));
@@ -11,7 +11,7 @@ export function go(name){
   state.prevScreen = state.currentScreen; state.currentScreen = name;
 
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(['home','explore','add','my',"register","login"].includes(name)) $('#nav-'+name).classList.add('active');
+  if(['home','explore','add','my',"register","login","settings"].includes(name)) $('#nav-'+name).classList.add('active');
 
   const backBtn = $('#header-back');
   const editBtn = $('#header-edit');
@@ -22,7 +22,7 @@ export function go(name){
     const isOwner = !!v && v.ownerId === getOwnerId();
     editBtn.style.display = isOwner ? 'inline-flex' : 'none';
   } else { editBtn.style.display = 'none'; }
-  title.textContent = {add:'Join Nsika', my:'My Shop', profile:'Vendor', explore:'Explore'}[name] || 'Nsika';
+  title.textContent = {add:'Join Nsika', my:'My Shop', profile:'Vendor', explore:'Explore', settings:'Settings'}[name] || 'Nsika';
 
   if(name==='home') renderHome();
   if(name==='explore') renderExplore();

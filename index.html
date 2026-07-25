@@ -125,6 +125,95 @@
   <div id="screen-profile" class="screen">
     <div id="profile-content"></div>
   </div>
+
+  <div id="screen-settings" class="screen max-width-sm">
+    <div class="settings-shell">
+      <div class="settings-hero">
+        <div>
+          <p class="eyebrow">Preferences</p>
+          <h2>Make Nsika feel like home</h2>
+          <p class="small">Adjust the experience, keep your shop view tidy, and stay in control of what matters most.</p>
+        </div>
+        <div class="settings-badge">v1.0</div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h3>Appearance</h3>
+            <p class="small">Switch between light and dark mode for a more comfortable browsing experience.</p>
+          </div>
+          <button type="button" class="btn btn-outline" onclick="toggleTheme()">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            Toggle theme
+          </button>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <h4>Theme</h4>
+            <p class="small">Choose the color palette that suits your day.</p>
+          </div>
+          <span class="settings-pill" id="settings-theme-pill">Light</span>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Account</h3>
+        <div class="settings-list">
+          <button type="button" class="settings-item" onclick="go('my')">
+            <span class="settings-item-main">
+              <i class="fa-solid fa-store settings-icon"></i>
+              <span>
+                <strong>My business</strong>
+                <small>View and edit your listings</small>
+              </span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <button type="button" class="settings-item" onclick="go('add')">
+            <span class="settings-item-main">
+              <i class="fa-solid fa-plus settings-icon"></i>
+              <span>
+                <strong>Add a listing</strong>
+                <small>Create another shop or service entry</small>
+              </span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Support</h3>
+        <div class="settings-list">
+          <a class="settings-item" href="mailto:support@nsika.app">
+            <span class="settings-item-main">
+              <i class="fa-solid fa-envelope settings-icon"></i>
+              <span>
+                <strong>Contact support</strong>
+                <small>Need help or want to share feedback?</small>
+              </span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+
+          <button type="button" class="settings-item danger" onclick="logout()">
+            <span class="settings-item-main">
+              <i class="fa-solid fa-right-from-bracket settings-icon"></i>
+              <span>
+                <strong>Log out</strong>
+                <small>Sign out of your account</small>
+              </span>
+            </span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="screen-register" class="screen">
 
   <h2 class="section-title">
@@ -306,7 +395,7 @@ Login
       <span>My Shop</span>
     </button>
 
-         <button class="nav-item active" onclick="go('login')" id="nav-login">
+         <button class="nav-item" onclick="go('settings')" id="nav-settings">
       <i class="fa-solid fa-gears"></i>
       <span>Settings</span>
     </button>
