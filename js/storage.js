@@ -34,7 +34,6 @@ export async function load() {
         state.cats = [];
     } else {
         state.cats = categories;
-        console.log("Loaded categories:", state.cats);
     }
 
 
@@ -67,3 +66,30 @@ export function save() {
     // Temporary.
     // We'll replace this when we build vendor creation/editing.
 }
+
+export async function uploadBusinessPhotos(businessId) {
+    const photoUrls = [];
+    for (let i = 0; i < state.signupPhotos.length; i++) {
+        const file = state.signupPhotos[i];
+        if (!file) continue;
+        const ext = file.name.split(".").pop() || "jpg";
+        const filename = `${crypto.randomUUID()}.${ext}`;
+        const path = `${businessId}/${filename}`;
+        const { error } = await supabase.storage
+            .from("business-images")
+            .upload(path, file);
+        if (error) {
+            console.error("Photo upload error:", error);
+            throw error;
+        }
+        const { data } = supabase.storage
+            .from("business-images")
+            .getPublicUrl(path);
+        photoUrls.push(data.publicUrl);
+    }
+    return photoUrls;
+}
+
+const urls = await uploadBusinessPhotos("53381c01-2899-4b75-90f6-c38fe43c169e");
+
+console.log(urls);

@@ -37,6 +37,7 @@ window.saveEdit = edit.saveEdit;
 window.deleteListing = edit.deleteListing;
 window.headerAction = edit.headerAction;
 
+window.togglePause = edit.togglePause;
 
 
 init();

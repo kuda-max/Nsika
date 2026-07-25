@@ -1,0 +1,283 @@
+This is actually one of the strongest parts of Nsika if you pitch it correctly.
+
+The mistake most people make is saying:
+
+> "We'll make money from ads."
+
+That's weak because it sounds like there's no real business model.
+
+Instead, I'd explain that **Nsika is a local business infrastructure platform**. Discovery is the first product; revenue comes from services built on top of that.
+
+Here's how I'd answer.
+
+---
+
+## The problem
+
+Millions of small businesses in Malawi and across Africa are invisible online.
+
+A tailor, mechanic, salon, carpenter, or food vendor often relies entirely on:
+
+* Word of mouth
+* WhatsApp
+* Facebook posts
+* Walking customers
+
+They have no simple, searchable business presence.
+
+Nsika solves that.
+
+---
+
+## Revenue Model 1 — Featured Businesses (Most likely)
+
+This would probably be your first monetization.
+
+Businesses pay a monthly fee to appear at the top of search results.
+
+Example:
+
+```
+Search: Mechanics
+
+⭐ Joe's Garage (Featured)
+⭐ FastFix Auto (Featured)
+
+Regular Listings...
+```
+
+Even if only a few businesses pay, this can generate recurring revenue.
+
+Example pricing:
+
+* MWK 5,000/month
+* 500 featured businesses
+
+That's:
+
+**MWK 2.5 million/month**
+
+without charging ordinary users.
+
+---
+
+## Revenue Model 2 — Business Analytics (Premium)
+
+Free users get listed.
+
+Premium users see:
+
+* Profile views
+* Phone clicks
+* WhatsApp clicks
+* Direction requests
+* Search ranking
+
+Example:
+
+```
+This month
+
+Profile Views
+482
+
+Phone Calls
+37
+
+WhatsApp Messages
+22
+```
+
+Businesses love knowing if their listing is working.
+
+---
+
+## Revenue Model 3 — Verification
+
+A verified badge.
+
+```
+✓ Verified Business
+```
+
+Businesses submit documentation.
+
+Pay:
+
+MWK 10,000 once
+
+or
+
+MWK 500/month
+
+People trust verified businesses more.
+
+---
+
+## Revenue Model 4 — Sponsored Categories
+
+A company can sponsor an entire category.
+
+Example:
+
+```
+Mechanics
+
+Sponsored by Castrol
+```
+
+or
+
+```
+Building Materials
+
+Sponsored by Lafarge
+```
+
+That's B2B advertising rather than random banner ads.
+
+---
+
+## Revenue Model 5 — Business Websites
+
+Once a business already has its information in Nsika:
+
+```
+Name
+Description
+Photos
+Phone
+Location
+```
+
+Generating a simple website becomes almost automatic.
+
+Offer:
+
+```
+Get your own website
+
+gracetailoring.nsika.mw
+
+or
+
+gracetailoring.com
+```
+
+Monthly subscription.
+
+---
+
+## Revenue Model 6 — Booking (Future)
+
+Some businesses take appointments.
+
+Example:
+
+* Barber
+* Salon
+* Tutor
+
+Customers book through Nsika.
+
+Vendor pays monthly.
+
+---
+
+## Revenue Model 7 — Local Ads
+
+Instead of Google Ads,
+
+sell advertising to local businesses.
+
+Example:
+
+```
+Hardware Store
+
+Sponsored Result
+```
+
+Only businesses inside a town pay.
+
+---
+
+## Revenue Model 8 — Government & NGO Directory
+
+Governments and NGOs often need searchable directories for:
+
+* Farmers
+* Cooperatives
+* Health workers
+* Youth businesses
+
+Nsika could license the platform as a white-label solution.
+
+---
+
+## Revenue Model 9 — API
+
+Once Nsika has thousands of verified businesses:
+
+Banks
+
+Delivery companies
+
+Insurance companies
+
+Logistics companies
+
+could pay to access verified business data.
+
+---
+
+# Why this business is attractive
+
+The key is that your costs don't scale linearly.
+
+Whether you have:
+
+* 1,000 businesses
+* 10,000 businesses
+* 100,000 businesses
+
+the platform is largely the same.
+
+That's what investors mean by a scalable software business.
+
+---
+
+# The long-term vision
+
+I wouldn't pitch Nsika as:
+
+> "It's a business directory."
+
+I'd pitch it as:
+
+> **"Nsika is becoming the digital identity layer for local businesses in Africa."**
+
+Today it's:
+
+* Discovery
+* Contact
+
+Tomorrow it becomes:
+
+* Discovery
+* Trust (verification)
+* Analytics
+* Booking
+* Business websites
+* Local advertising
+* Business intelligence
+
+That's a much bigger story.
+
+---
+
+## If I were pitching Nsika in one sentence
+
+> **Nsika helps local businesses become discoverable online for free, while generating recurring revenue through premium visibility, business tools, and digital services that help those businesses grow.**
+
+That's a business model that's easy to understand, doesn't rely on charging customers to browse, and gives you multiple revenue streams as the platform grows.

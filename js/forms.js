@@ -10,26 +10,40 @@ export function populateSelect(elId, selected=''){
 	sel.innerHTML = '<option value="">Pick a category</option>' + state.cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.name}</option>`).join('');
 }
 
-export function handlePhoto(input, idx){
-	if(!input.files || !input.files[0]) return;
-	const slot = input.parentElement;
-	const reader = new FileReader();
-	reader.onload = e => {
-		const img = new Image();
-		img.onload = () => {
-			const c = document.createElement('canvas'), x = c.getContext('2d');
-			const w = 400, h = Math.round(img.height * (w/img.width));
-			c.width = w; c.height = h;
-			x.drawImage(img,0, 0, w, h);
-			const url = c.toDataURL('image/jpeg', 0.75);
-			let im = slot.querySelector('img');
-			if(!im){ im = document.createElement('img'); slot.appendChild(im); }
-			im.src = url; slot.classList.add('has-img'); slot.querySelector('svg').style.display='none';
-			state.signupPhotos[idx] = url;
-		};
-		img.src = e.target.result;
-	};
-	reader.readAsDataURL(input.files[0]);
+export async function handlePhoto(input, idx){
+
+    if(!input.files?.length) return;
+
+    const file = input.files[0];
+
+    const compressed = await imageCompression(file,{
+        maxSizeMB:0.3,
+        maxWidthOrHeight:1280,
+        useWebWorker:true,
+        initialQuality:0.8
+    });
+
+    const slot = input.parentElement;
+
+    let img = slot.querySelector("img");
+
+    if(!img){
+
+        img = document.createElement("img");
+        slot.appendChild(img);
+
+    }
+
+    img.src = URL.createObjectURL(compressed);
+
+    slot.classList.add("has-img");
+
+    const icon = slot.querySelector("i");
+
+    if(icon) icon.style.display = "none";
+
+    state.signupPhotos[idx] = compressed;
+
 }
 
 export async function submitVendor(event) {
@@ -42,12 +56,10 @@ export async function submitVendor(event) {
     error: userError
   } = await supabase.auth.getUser();
 
-
   if (userError || !user) {
     showToast("You must be logged in to submit a business.");
     return;
   }
-
 
   const business = {
     owner_id: user.id,
@@ -59,13 +71,11 @@ export async function submitVendor(event) {
     description: form.description.value
   };
 
-
   const { data, error } = await supabase
     .from("businesses")
     .insert(business)
     .select()
     .single();
-
 
   if (error) {
     console.error("Business creation error:", error);
@@ -73,10 +83,21 @@ export async function submitVendor(event) {
     return;
   }
 
+  try {
 
-  console.log("Business created:", data);
+    const photoUrls = await uploadBusinessPhotos(data.id);
 
-  showToast("Your business is now live!");
+    console.log("Uploaded photos:", photoUrls);
+
+    showToast("Your business is now live!");
+
+  } catch (err) {
+
+    console.error("Photo upload error:", err);
+
+    showToast("Business created, but photo upload failed.");
+
+  }
 }
 
 export async function registerVendor(event) {
@@ -107,9 +128,7 @@ export async function registerVendor(event) {
   }
 
 
-  console.log("Account created:", data);
-  console.log("User:", data.user);
-console.log("Session:", data.session);
+
   showToast("Account created. Now add your business details.");
 
   // move to listing form
@@ -139,7 +158,7 @@ export async function loginVendor(event){
 
     }
 
-    console.log("Logged in:", data.user);
+
 
 const check = await supabase.auth.getSession();
 
@@ -162,4 +181,27 @@ export async function openAddListing() {
     }
 
     window.go("add");
+}
+
+export async function uploadBusinessPhotos(businessId) {
+    const photoUrls = [];
+    for (let i = 0; i < state.signupPhotos.length; i++) {
+        const file = state.signupPhotos[i];
+        if (!file) continue;
+        const ext = file.name.split(".").pop() || "jpg";
+        const filename = `${crypto.randomUUID()}.${ext}`;
+        const path = `${businessId}/${filename}`;
+        const { error } = await supabase.storage
+            .from("business-images")
+            .upload(path, file);
+        if (error) {
+            console.error("Photo upload error:", error);
+            throw error;
+        }
+        const { data } = supabase.storage
+            .from("business-images")
+            .getPublicUrl(path);
+        photoUrls.push(data.publicUrl);
+    }
+    return photoUrls;
 }

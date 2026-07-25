@@ -27,9 +27,7 @@ export async function init(){
 
         state.user = data.user;
 
-    }
-
-	console.log("Current user:", state.user);
+    }	
 
 }
 

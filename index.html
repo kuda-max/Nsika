@@ -281,28 +281,25 @@ Login
       <span>Home</span>
     </button>
 
-     <button class="nav-item active" onclick="go('register')" id="nav-register">
-      <i class="fa-solid fa-house"></i>
-      <span>reg</span>
-    </button>
-
-     <button class="nav-item active" onclick="go('login')" id="nav-login">
-      <i class="fa-solid fa-house"></i>
-      <span>Login</span>
-    </button>
-
     <button class="nav-item" onclick="openExploreAll()" id="nav-explore">
       <i class="fa-solid fa-magnifying-glass"></i>
       <span>Explore</span>
     </button>
-    <button class="nav-item" onclick="go('add')" id="nav-add">
+    <button class="nav-item" onclick="openMyBusiness()" id="nav-add">
       <i class="fa-solid fa-plus"></i>
       <span>Add</span>
     </button>
-    <button class="nav-item" onclick="openMyBusiness()" id="nav-my">
+    <button class="nav-item" onclick="go('my')" id="nav-my">
       <i class="fa-solid fa-store"></i>
       <span>My Shop</span>
     </button>
+
+         <button class="nav-item active" onclick="go('login')" id="nav-login">
+      <i class="fa-solid fa-gears"></i>
+      <span>Settings</span>
+    </button>
+
+
   </nav>
 
   <!-- Edit Sheet -->
@@ -348,5 +345,6 @@ Login
 </div>
 <script type="module" src="js/supabase.js"></script>
 <script type="module" src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </body>
 </html>
