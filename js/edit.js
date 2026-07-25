@@ -113,12 +113,116 @@ export async function saveEdit(event) {
 
 }
 
-export function deleteListing(){
-	const id = document.querySelector('#edit-id').value;
-	const v = state.vendors.find(x=>x.id===id);
-	if(!v || v.ownerId !== localStorage.getItem('nsika_owner_id')) return;
-	if(confirm('Delete this listing?')){ v.isActive=false; save(); closeEdit(); showToast('Listing deleted'); if(state.currentScreen==='profile'){ if(window.go) window.go('my'); } else { if(window.renderMy) window.renderMy(); } }
+export async function deleteListing(){
+
+    const id = document.querySelector('#edit-id').value;
+
+    const v = state.vendors.find(x => x.id === id);
+
+    if(!v) return;
+
+
+    const {
+        data: { user },
+        error: userError
+    } = await supabase.auth.getUser();
+
+
+    if(userError || !user || v.ownerId !== user.id){
+        showToast("You can't delete this listing.");
+        return;
+    }
+
+
+    if(!confirm("Delete this listing permanently? This cannot be undone.")){
+        return;
+    }
+
+
+    try {
+
+        // 1. Get image records
+        const { data: images, error: imageFetchError } = await supabase
+            .from("business_images")
+            .select("image_url")
+            .eq("business_id", id);
+
+
+        if(imageFetchError) throw imageFetchError;
+
+
+        // 2. Delete files from Storage
+        if(images && images.length){
+
+            const filePaths = images.map(img => {
+
+                const url = new URL(img.image_url);
+
+                return url.pathname.split("/business-images/")[1];
+
+            });
+
+
+            const { error: storageError } = await supabase.storage
+                .from("business-images")
+                .remove(filePaths);
+
+
+            if(storageError) throw storageError;
+
+        }
+
+
+        // 3. Delete image database rows
+        const { error: imageDeleteError } = await supabase
+            .from("business_images")
+            .delete()
+            .eq("business_id", id);
+
+
+        if(imageDeleteError) throw imageDeleteError;
+
+
+        // 4. Delete the business
+        const { error: businessDeleteError } = await supabase
+            .from("businesses")
+            .delete()
+            .eq("id", id);
+
+
+        if(businessDeleteError) throw businessDeleteError;
+
+
+
+        // remove locally
+        state.vendors = state.vendors.filter(x => x.id !== id);
+
+
+        closeEdit();
+
+        showToast("Listing permanently deleted");
+
+
+        if(state.currentScreen === 'profile'){
+
+            if(window.go) window.go('my');
+
+        } else {
+
+            if(window.renderMy) window.renderMy();
+
+        }
+
+
+    } catch(err){
+
+        console.error("Delete listing failed:", err);
+        showToast("Could not delete listing.");
+
+    }
+
 }
+
 export async function headerAction(){
 
     if(!state.currentProfileId) return;

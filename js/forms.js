@@ -47,57 +47,77 @@ export async function handlePhoto(input, idx){
 }
 
 export async function submitVendor(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const form = event.target;
+    const form = event.target;
 
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
+    const {
+        data: { user },
+        error: userError
+    } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    showToast("You must be logged in to submit a business.");
-    return;
-  }
+    if (userError || !user) {
+        showToast("You must be logged in to submit a business.");
+        return;
+    }
 
-  const business = {
-    owner_id: user.id,
-    name: form.name.value,
-    phone: form.phone.value,
-    whatsapp: form.whatsapp.value || form.phone.value,
-    category_id: form.category.value,
-    town: form.town.value,
-    description: form.description.value
-  };
+    const business = {
+        owner_id: user.id,
+        name: form.name.value,
+        phone: form.phone.value,
+        whatsapp: form.whatsapp.value || form.phone.value,
+        category_id: form.category.value,
+        town: form.town.value,
+        description: form.description.value
+    };
 
-  const { data, error } = await supabase
-    .from("businesses")
-    .insert(business)
-    .select()
-    .single();
+    // Create the business
+    const { data, error } = await supabase
+        .from("businesses")
+        .insert(business)
+        .select()
+        .single();
 
-  if (error) {
-    console.error("Business creation error:", error);
-    showToast("Error creating business: " + error.message);
-    return;
-  }
+    if (error) {
+        console.error("Business creation error:", error);
+        showToast("Error creating business: " + error.message);
+        return;
+    }
 
-  try {
+    try {
 
-    const photoUrls = await uploadBusinessPhotos(data.id);
+        // Upload photos to Storage
+        const photoUrls = await uploadBusinessPhotos(data.id);
 
-    console.log("Uploaded photos:", photoUrls);
+        // Save photo URLs to the database
+        if (photoUrls.length > 0) {
 
-    showToast("Your business is now live!");
+            const imageRows = photoUrls.map(url => ({
+                business_id: data.id,
+                image_url: url
+            }));
 
-  } catch (err) {
+            const { error: imageError } = await supabase
+                .from("business_images")
+                .insert(imageRows);
 
-    console.error("Photo upload error:", err);
+            if (imageError) {
+                console.error("Image DB error:", imageError);
+                showToast("Business created, but images couldn't be linked.");
+                return;
+            }
 
-    showToast("Business created, but photo upload failed.");
+        }
 
-  }
+        showToast("Your business is now live!");
+
+    } catch (err) {
+
+        console.error("Photo upload error:", err);
+        showToast("Business created, but photo upload failed.");
+
+    }
+
 }
 
 export async function registerVendor(event) {
