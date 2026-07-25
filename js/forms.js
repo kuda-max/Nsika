@@ -97,7 +97,8 @@ export async function submitVendor(event) {
 
             const imageRows = photoUrls.map(url => ({
                 business_id: data.id,
-                image_url: url
+                image_url: url,
+                is_cover: index === 0 // First image is the cover
             }));
 
             const { error: imageError } = await supabase

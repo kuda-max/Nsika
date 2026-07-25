@@ -37,11 +37,25 @@ export function renderEditImages(v){
 
                 <img src="${img.image_url}" alt="">
 
+            <div class="edit-photo-actions">
+
+                ${
+                    img.is_cover
+                    ? `<span class="cover-badge">⭐ Cover</span>`
+                    : `<button
+                            type="button"
+                            onclick="setCoverImage('${img.id}')">
+                            Set Cover
+                    </button>`
+                }
+
                 <button
                     type="button"
                     onclick="removeBusinessImage('${img.id}')">
                     Delete
                 </button>
+
+            </div>
 
             </div>
 
@@ -65,13 +79,25 @@ export async function removeBusinessImage(imageId){
 
 
         const vendorId = document.querySelector("#edit-id").value;
+        const { count, error: countError } = await supabase
+            .from("business_images")
+            .select("*", { count: "exact", head: true })
+            .eq("business_id", vendorId);
+
+        if (countError) throw countError;
+
+        if (count <= 1) {
+            showToast("A business must have at least one photo.");
+            hideLoader();
+            return;
+        }
 
 
         // Get image URL first
 
         const { data:image, error:fetchError } = await supabase
             .from("business_images")
-            .select("image_url")
+            .select("image_url, is_cover")
             .eq("id", imageId)
             .single();
 
@@ -109,7 +135,28 @@ console.log("DATABASE DELETE RESULT:", deleteError);
 
         if(deleteError) throw deleteError;
 
+        // If the deleted photo was the cover,
+        // promote the first remaining photo.
+        if (image.is_cover) {
 
+            const { data: remainingImages, error:remainingError } = await supabase
+                .from("business_images")
+                .select("id")
+                .eq("business_id", vendorId)
+                .order("created_at", { ascending: true });
+
+            if (remainingError) throw remainingError;
+
+            if (remainingImages.length > 0) {
+
+                const { error:coverError } = await supabase
+                    .from("business_images")
+                    .update({ is_cover: true })
+                    .eq("id", remainingImages[0].id);
+
+                if (coverError) throw coverError;
+            }
+        }
 
         await load();
 
@@ -262,6 +309,66 @@ export async function handleEditPhotos(input){
 
     }
 
+
+    hideLoader();
+
+}
+
+export async function setCoverImage(imageId){
+
+    showLoader("Updating cover...");
+
+    try{
+
+        const businessId =
+            document.querySelector("#edit-id").value;
+
+
+        // Remove old cover
+
+        await supabase
+            .from("business_images")
+            .update({
+                is_cover:false
+            })
+            .eq("business_id", businessId);
+
+
+        // Set new cover
+
+        const { error } =
+            await supabase
+            .from("business_images")
+            .update({
+                is_cover:true
+            })
+            .eq("id", imageId);
+
+
+        if(error) throw error;
+
+
+        await load();
+
+
+        const vendor =
+            state.vendors.find(
+                v => v.id === businessId
+            );
+
+
+        renderEditImages(vendor);
+
+        showToast("Cover updated");
+
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast("Couldn't update cover");
+
+    }
 
     hideLoader();
 

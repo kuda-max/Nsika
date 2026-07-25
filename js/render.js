@@ -12,12 +12,19 @@ export function catCard(c){
 }
 export function renderCategories(){ $('#cat-grid').innerHTML = state.cats.map(catCard).join(''); }
 
-export function vCard(v, editable=false){
-	const cat = {name: v.categoryName || 'Vendor'};
-	const img = v.photoUrls[0] || makePlaceholder(v.name, 0);
-	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
-	const phone = v.phone.replace(/\D/g,'');
-	return `
+export function vCard(v, editable = false){
+    const cat = {name: v.categoryName || 'Vendor'};
+	const cover = v.images?.find(img => img.is_cover);
+
+    const img =
+        cover?.image_url ||
+        v.photoUrls[0] ||
+        makePlaceholder(v.name, 0);
+
+    const wa = (v.whatsapp || v.phone).replace(/\D/g,'');
+    const phone = v.phone.replace(/\D/g,'');
+
+    return `
  <div class="v-card">
 			<img class="v-thumb" src="${img}" alt="" ${editable ? `onclick="openEdit('${v.id}')"` : `onerror="this.src='${makePlaceholder(v.name,0)}'"  onclick="openProfile('${v.id}')"`}>
 			<div class="v-info">
@@ -87,7 +94,8 @@ if(pauseBtn){
 
 	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
-	const photos = v.photoUrls.length ? v.photoUrls : [makePlaceholder(v.name,0)];
+	const photos =v.images?.length? [ ...(v.images.filter(i => i.is_cover).map(i => i.image_url)),...(v.images.filter(i => !i.is_cover).map(i => i.image_url))]
+        : [makePlaceholder(v.name,0)];
 	$('#profile-content').innerHTML = `
 		<div class="profile-hero">
 			<img class="profile-img" src="${photos[0]}" alt="">

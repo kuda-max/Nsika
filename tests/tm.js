@@ -1,4 +1,4 @@
-import { supabase } from "./js/supabase.js";
+import { supabase } from "../js/supabase.js";
 
 const input = document.getElementById("imageInput");
 const preview = document.getElementById("preview");

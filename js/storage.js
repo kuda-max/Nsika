@@ -17,7 +17,8 @@ const { data, error } = await supabase
         ),
         business_images (
             id,
-            image_url
+            image_url,
+            is_cover
         )
     `)
     .order("created_at", { ascending: false });
