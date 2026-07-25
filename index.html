@@ -317,6 +317,7 @@ Login
   <!-- Edit Sheet -->
   <div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
   <div class="sheet" id="edit-sheet">
+
     <div class="sheet-handle"></div>
     <h3>Edit Business</h3>
     <p class="subtitle">Update your details so customers reach you.</p>
@@ -350,9 +351,14 @@ Login
         <label>Description</label>
         <textarea name="description" id="edit-description" required></textarea>
       </div>
+
+      <div id="edit-images"></div>
+
       <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
       <button type="button" class="btn btn-outline btn-full" style="margin-top:8px; color:var(--danger); border-color:var(--border);" onclick="deleteListing()">Delete Listing</button>
     </form>
+
+
   </div>
 </div>
 <script type="module" src="js/supabase.js"></script>

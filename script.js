@@ -8,6 +8,7 @@ import * as ui from './js/ui.js';
 import * as search from './js/search.js';
 import * as auth from './js/auth.js';
 import * as vendor from './js/vendor.js';
+import * as imageManager from './js/image-manager.js';
 
 // Expose functions used by inline handlers in the HTML (keep behavior unchanged)
 window.onSearch = search.onSearch;
@@ -39,5 +40,6 @@ window.headerAction = edit.headerAction;
 
 window.togglePause = edit.togglePause;
 
+window.removeBusinessImage = imageManager.removeBusinessImage;
 
 init();

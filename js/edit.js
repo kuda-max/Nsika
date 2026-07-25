@@ -5,6 +5,7 @@ import { showToast } from './ui.js';
 import { load } from "./storage.js";
 import { renderHome, renderMy, renderProfile } from "./render.js";
 import { showLoader, hideLoader } from "./utils.js";
+import { renderEditImages } from "./image-manager.js";
 
 async function getUser(){
 	const { data:{user} } = await supabase.auth.getUser();
@@ -46,6 +47,7 @@ export async function openEdit(id){
         ).join('');
 
 
+    renderEditImages(v);
     $('#edit-overlay').classList.add('open');
     $('#edit-sheet').classList.add('open');
 }

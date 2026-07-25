@@ -113,6 +113,7 @@ export async function submitVendor(event) {
         }
         hideLoader();
         showToast("Your business is now live!");
+        go("my");
 
     } catch (err) {
 

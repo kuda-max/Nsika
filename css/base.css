@@ -309,7 +309,7 @@ textarea { resize: vertical; min-height: 90px; }
   width: 350px;
   height: 180px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -334,7 +334,7 @@ textarea { resize: vertical; min-height: 90px; }
   left: 0;
   width: 50%;
   height: 10px;
-  background: #002;
+  background: var(--primary);
   border-radius: 10px;
   z-index: 1;
   animation: loading 0.6s alternate infinite;
@@ -362,4 +362,49 @@ textarea { resize: vertical; min-height: 90px; }
   100% {
     left: 70%;
   }
+}
+
+.edit-photo-grid{
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:15px;
+
+}
+
+
+.edit-photo{
+
+    position:relative;
+
+}
+
+
+.edit-photo img{
+
+    width:100%;
+    aspect-ratio:1;
+    object-fit:cover;
+    border-radius:10px;
+
+}
+
+
+.edit-photo button{
+
+    position:absolute;
+    bottom:5px;
+    left:5px;
+
+    background:rgba(0,0,0,.7);
+    color:white;
+
+    border:none;
+    border-radius:6px;
+
+    padding:5px 8px;
+
+    cursor:pointer;
+
 }
