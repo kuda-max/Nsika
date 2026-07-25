@@ -56,3 +56,27 @@ export function isOwner(v){
     );
 
 }
+
+export function showLoader(message="dikilani pang'ono..."){
+
+    const loader = document.getElementById("global-loader");
+    const text = document.getElementById("loader-text");
+
+    if(!loader) return;
+
+    text.textContent = message;
+
+    loader.style.display = "flex";
+
+}
+
+
+export function hideLoader(){
+
+    const loader = document.getElementById("global-loader");
+
+    if(!loader) return;
+
+    loader.style.display = "none";
+
+}

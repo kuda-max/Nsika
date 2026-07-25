@@ -4,6 +4,7 @@ import { save } from './storage.js';
 import { showToast } from './ui.js';
 import { load } from "./storage.js";
 import { supabase } from "./supabase.js";
+import { showLoader, hideLoader } from "./utils.js";
 
 export function populateSelect(elId, selected=''){
 	const sel = document.getElementById(elId);
@@ -48,7 +49,7 @@ export async function handlePhoto(input, idx){
 
 export async function submitVendor(event) {
     event.preventDefault();
-
+     showLoader("Submitting your business...");
     const form = event.target;
 
     const {
@@ -57,6 +58,7 @@ export async function submitVendor(event) {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
+        hideLoader();
         showToast("You must be logged in to submit a business.");
         return;
     }
@@ -80,6 +82,7 @@ export async function submitVendor(event) {
 
     if (error) {
         console.error("Business creation error:", error);
+        hideLoader()
         showToast("Error creating business: " + error.message);
         return;
     }
@@ -108,7 +111,7 @@ export async function submitVendor(event) {
             }
 
         }
-
+        hideLoader();
         showToast("Your business is now live!");
 
     } catch (err) {

@@ -4,6 +4,7 @@ import { supabase } from './supabase.js';
 import { showToast } from './ui.js';
 import { load } from "./storage.js";
 import { renderHome, renderMy, renderProfile } from "./render.js";
+import { showLoader, hideLoader } from "./utils.js";
 
 async function getUser(){
 	const { data:{user} } = await supabase.auth.getUser();
@@ -114,7 +115,7 @@ export async function saveEdit(event) {
 }
 
 export async function deleteListing(){
-
+    showLoader("Deleting listing...");
     const id = document.querySelector('#edit-id').value;
 
     const v = state.vendors.find(x => x.id === id);
@@ -129,12 +130,14 @@ export async function deleteListing(){
 
 
     if(userError || !user || v.ownerId !== user.id){
+        hideLoader();
         showToast("You can't delete this listing.");
         return;
     }
 
 
     if(!confirm("Delete this listing permanently? This cannot be undone.")){
+        hideLoader();
         return;
     }
 
@@ -200,6 +203,7 @@ export async function deleteListing(){
 
         closeEdit();
 
+        hideLoader();
         showToast("Listing permanently deleted");
 
 
@@ -215,7 +219,7 @@ export async function deleteListing(){
 
 
     } catch(err){
-
+        hideLoader();
         console.error("Delete listing failed:", err);
         showToast("Could not delete listing.");
 

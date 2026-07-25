@@ -36,10 +36,11 @@ export async function currentUser() {
 
 
 export async function logout() {
-
+    showToast("Signing out...");
     const { error } = await supabase.auth.signOut();
 
     if (error) {
+        
         showToast("Error signing out: " + error.message);
         return;
     }
