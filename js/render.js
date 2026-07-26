@@ -40,14 +40,51 @@ export function vCard(v, editable = false){
 		</div>`;
 }
 
-export function filteredVendors(q, town, cat){
- q = (q||'').toLowerCase();
-	return state.vendors.filter(v=>v.isActive).filter(v=>{
-		const matchTown = town==='All' || (v.town+' '+v.area).toLowerCase().includes(town.toLowerCase());
-		const matchQ = !q || (v.name +' ' +v.description +' ' +(v.categoryName || '')).toLowerCase().includes(q);
-		const matchCat = !cat || v.category===cat;
-		return matchTown && matchQ && matchCat;
-	}).sort((a,b)=>b.createdAt - a.createdAt);
+export function filteredVendors(q, town, cat) {
+
+    q = (q || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLowerCase();
+
+    const words = q.split(" ").filter(Boolean);
+
+    return state.vendors
+        .filter(v => v.isActive)
+        .filter(v => {
+
+            const searchable = [
+                v.name,
+                v.description,
+                v.categoryName,
+                v.phone,
+                v.whatsapp,
+                v.town,
+                v.area
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+            const matchTown =
+                town === "All" ||
+                `${v.town} ${v.area}`
+                    .toLowerCase()
+                    .includes(town.toLowerCase());
+
+            const matchQ =
+                words.length === 0 ||
+                words.every(word => searchable.includes(word));
+
+            const matchCat =
+                !cat ||
+                v.category === cat;
+
+            return matchTown && matchQ && matchCat;
+
+        })
+        .sort((a, b) => b.createdAt - a.createdAt);
+
 }
 
 export function renderHome(){

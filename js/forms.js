@@ -98,7 +98,7 @@ export async function submitVendor(event) {
             const imageRows = photoUrls.map(url => ({
                 business_id: data.id,
                 image_url: url,
-                is_cover: index === 0 // First image is the cover
+                is_cover: photoUrls.indexOf(url) === 0 // 
             }));
 
             const { error: imageError } = await supabase
@@ -114,7 +114,7 @@ export async function submitVendor(event) {
         }
         hideLoader();
         showToast("Your business is now live!");
-        go("my");
+        go("home");
 
     } catch (err) {
 
