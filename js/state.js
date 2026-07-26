@@ -8,5 +8,11 @@ export const state = {
 	selectedTown: 'All',
 	currentProfileId: null,
 	signupPhotos: [null,null,null],
-	activeExploreCat: null
+	activeExploreCat: null,
+	location: {
+    lat: null,
+    lng: null,
+    address: "",
+    town: ""
+},
 };

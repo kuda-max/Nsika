@@ -69,8 +69,11 @@ export async function submitVendor(event) {
         phone: form.phone.value,
         whatsapp: form.whatsapp.value || form.phone.value,
         category_id: form.category.value,
-        town: form.town.value,
-        description: form.description.value
+        description: form.description.value,
+        latitude: state.location.lat,
+        longitude: state.location.lng,
+        address: state.location.address,
+        town: state.location.town
     };
 
     // Create the business
@@ -114,6 +117,12 @@ export async function submitVendor(event) {
         }
         hideLoader();
         showToast("Your business is now live!");
+        state.location = {
+    lat: null,
+    lng: null,
+    address: "",
+    town: ""
+};
         go("home");
 
     } catch (err) {

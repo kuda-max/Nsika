@@ -140,7 +140,7 @@ if(pauseBtn){
 				<div class="profile-title">${esc(v.name)}</div>
 				<div class="profile-sub">
 					<span class="badge">${esc(cat.name)}</span>
-					<span class="v-meta" style="color:var(--text-muted)"><i class="fa-solid fa-location-dot"></i> ${esc(v.town)}</span>
+					<span class="v-meta" style="color:var(--text-muted)"><i class="fa-solid fa-location-dot"></i> ${esc(v.address || v.town)}</span>
 				</div>
 
 				<div class="seller-top-row">
@@ -148,6 +148,14 @@ if(pauseBtn){
 					<div class="profile-actions">
 						<a class="btn btn-primary" href="tel:${v.phone}"><i class="fa-solid fa-phone"></i> Call</a>
 						<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+						${v.latitude && v.longitude ? `
+<a class="btn btn-outline"
+   target="_blank"
+   href="https://www.google.com/maps?q=${v.latitude},${v.longitude}">
+    <i class="fa-solid fa-location-arrow"></i>
+    Directions
+</a>
+` : ""}
 					</div>
 				</div>
 

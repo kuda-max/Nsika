@@ -56,10 +56,10 @@ const { data, error } = await supabase
         category: v.category_id,
 
         categoryName: v.categories?.name ?? "",
-
+        address: v.address,
         town: v.town,
-        area: v.area,
-
+        latitude: v.latitude,
+        longitude: v.longitude,
         description: v.description,
 
         photoUrls: v.business_images?.map(img => img.image_url) ?? [],

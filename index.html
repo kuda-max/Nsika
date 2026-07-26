@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/desktop.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <style>
   .search-box i,
   .icon-btn i,
@@ -332,13 +334,21 @@ Login
         <select name="category" required id="signup-category"><option value="">Pick a category</option></select>
       </div>
       <div class="form-group">
-        <label>Town / Area</label>
-        <input type="text" name="town" required placeholder="e.g. Area 25, Lilongwe">
-      </div>
-      <div class="form-group">
         <label>Short Description</label>
         <textarea name="description" required placeholder="What do you offer?"></textarea>
       </div>
+
+        <div class="form-group">
+
+    <label>Business Location</label>
+    
+    <small id="location-status">
+        Finding your location...
+    </small>
+<div id="signup-map"></div>
+    
+
+</div>
       <div class="form-group">
         <label>Photos (up to 3)</label>
         <div class="photo-slots" id="signup-photos">

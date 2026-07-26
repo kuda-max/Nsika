@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { $ } from './utils.js';
 import { renderHome, renderExplore, renderMy, renderProfile } from './render.js';
 import { getOwnerId } from './utils.js';
+import { initSignupMap } from './map.js';
 
 export const screens = { home:'home', explore:'explore', profile:'profile', add:'add', my:'my',register:'register',login:'login', settings:'settings' };
 export function go(name){
@@ -27,6 +28,7 @@ export function go(name){
   if(name==='home') renderHome();
   if(name==='explore') renderExplore();
   if(name==='my') renderMy();
+  if(name==='add') setTimeout(() => {initSignupMap();}, 100);
   if(name==='profile') renderProfile(state.currentProfileId);
 }
 
