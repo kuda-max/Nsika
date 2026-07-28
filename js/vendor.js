@@ -2,32 +2,25 @@ import { supabase } from "./supabase.js";
 import { state } from "./state.js";
 import { showToast } from "./ui.js";
 
+// Open the current user's existing business profile if they own one.
+// Otherwise, navigate to the add-business form.
 export async function openMyBusiness() {
-
-    // 1. Are they logged in?
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        showToast("You must be logged in to add your business.");
+        showToast("Mukuyenera kukhala logged in kuti muwone mndandanda wanu.");
         window.go("login");
         return;
     }
 
-    // 2. Do they already own a business?
     const mine = state.vendors.find(v => v.ownerId === user.id);
 
     if (mine) {
-        showToast("You already have a business listed. Redirecting to your profile.");
+        showToast("mndandanda muli nawo kale");
         state.currentProfileId = mine.id;
-
         window.renderProfile(mine.id);
-
         window.go("profile");
-
     } else {
-
         window.go("add");
-
     }
-
 }

@@ -4,41 +4,30 @@ import { state } from "./state.js";
 import { showToast } from "./ui.js";
 import { load } from "./storage.js";
 
+// Render the image management panel inside the edit view.
+// Displays each photo along with cover/delete actions.
 export function renderEditImages(v){
-
     const container = document.querySelector("#edit-images");
-
     if(!container) return;
 
-
     if(!v.images || v.images.length === 0){
-
         container.innerHTML = `
             <p style="color:var(--text-muted);">
                 No photos uploaded yet.
             </p>
         `;
-
         return;
     }
 
-
     container.innerHTML = `
-
         <h4 style="margin-bottom:10px;">
             Photos (${v.images.length}/5)
         </h4>
-
         <div class="edit-photo-grid">
-
         ${v.images.map(img => `
-
             <div class="edit-photo">
-
                 <img src="${img.image_url}" alt="">
-
             <div class="edit-photo-actions">
-
                 ${
                     img.is_cover
                     ? `<span class="cover-badge">⭐ Cover</span>`
@@ -48,36 +37,26 @@ export function renderEditImages(v){
                             Set Cover
                     </button>`
                 }
-
                 <button
                     type="button"
                     onclick="removeBusinessImage('${img.id}')">
                     Delete
                 </button>
-
             </div>
-
             </div>
-
         `).join("")}
-
         </div>
     `;
 }
 
 export async function removeBusinessImage(imageId){
-
     if(!confirm("Delete this photo?")){
         return;
     }
 
-
     showLoader("Deleting photo...");
 
-
     try {
-
-
         const vendorId = document.querySelector("#edit-id").value;
         const { count, error: countError } = await supabase
             .from("business_images")
@@ -92,53 +71,36 @@ export async function removeBusinessImage(imageId){
             return;
         }
 
-
-        // Get image URL first
-
+        // Retrieve the selected image record so we can remove its storage file.
         const { data:image, error:fetchError } = await supabase
             .from("business_images")
             .select("image_url, is_cover")
             .eq("id", imageId)
             .single();
 
-
         if(fetchError) throw fetchError;
 
-
-
-        // Remove storage file
-
+        // Remove the file from Supabase storage.
         const path = new URL(image.image_url)
             .pathname
             .split("/business-images/")[1];
-
 
         const { error:storageError } = await supabase.storage
             .from("business-images")
             .remove([path]);
 
-
         if(storageError) throw storageError;
 
-
-
-        // Remove database row
-
-const { error:deleteError } = await supabase
-    .from("business_images")
-    .delete()
-    .eq("id", imageId);
-
-
-console.log("DATABASE DELETE RESULT:", deleteError);
-
+        // Remove the image row in the database.
+        const { error:deleteError } = await supabase
+            .from("business_images")
+            .delete()
+            .eq("id", imageId);
 
         if(deleteError) throw deleteError;
 
-        // If the deleted photo was the cover,
-        // promote the first remaining photo.
+        // If the image being deleted was the cover photo, choose a new cover.
         if (image.is_cover) {
-
             const { data: remainingImages, error:remainingError } = await supabase
                 .from("business_images")
                 .select("id")
@@ -148,7 +110,6 @@ console.log("DATABASE DELETE RESULT:", deleteError);
             if (remainingError) throw remainingError;
 
             if (remainingImages.length > 0) {
-
                 const { error:coverError } = await supabase
                     .from("business_images")
                     .update({ is_cover: true })
@@ -160,30 +121,21 @@ console.log("DATABASE DELETE RESULT:", deleteError);
 
         await load();
 
-
         const updatedVendor = state.vendors.find(
             v => v.id === vendorId
         );
-
 
         if(updatedVendor){
             renderEditImages(updatedVendor);
         }
 
-
         showToast("Photo deleted");
-
-
     } catch(err){
-
         console.error("Delete image error:", err);
         showToast("Could not delete photo");
-
     }
 
-
     hideLoader();
-
 }
 
 export async function handleEditPhotos(input){
@@ -314,18 +266,15 @@ export async function handleEditPhotos(input){
 
 }
 
+// Set a new cover photo for the listing by clearing the current cover flag
+// and marking the selected image as the new cover.
 export async function setCoverImage(imageId){
-
     showLoader("Updating cover...");
 
     try{
+        const businessId = document.querySelector("#edit-id").value;
 
-        const businessId =
-            document.querySelector("#edit-id").value;
-
-
-        // Remove old cover
-
+        // Clear the old cover photo flag for all images of this business.
         await supabase
             .from("business_images")
             .update({
@@ -333,43 +282,24 @@ export async function setCoverImage(imageId){
             })
             .eq("business_id", businessId);
 
-
-        // Set new cover
-
-        const { error } =
-            await supabase
+        // Mark the chosen image row as the new cover.
+        const { error } = await supabase
             .from("business_images")
             .update({
                 is_cover:true
             })
             .eq("id", imageId);
 
-
         if(error) throw error;
 
-
         await load();
-
-
-        const vendor =
-            state.vendors.find(
-                v => v.id === businessId
-            );
-
-
+        const vendor = state.vendors.find(v => v.id === businessId);
         renderEditImages(vendor);
-
         showToast("Cover updated");
-
-
-    }catch(err){
-
+    } catch(err){
         console.error(err);
-
         showToast("Couldn't update cover");
-
     }
 
     hideLoader();
-
 }

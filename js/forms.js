@@ -6,50 +6,42 @@ import { load } from "./storage.js";
 import { supabase } from "./supabase.js";
 import { showLoader, hideLoader } from "./utils.js";
 
+// Populate a category select element with options from the loaded category list.
+// The selected parameter controls which category option should be pre-selected.
 export function populateSelect(elId, selected=''){
 	const sel = document.getElementById(elId);
 	sel.innerHTML = '<option value="">Pick a category</option>' + state.cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.name}</option>`).join('');
 }
 
+// Handle image selection on a signup photo input.
+// Compresses the selected image, previews it in the form slot, and stores it in temporary state.
 export async function handlePhoto(input, idx){
-
     if(!input.files?.length) return;
-
     const file = input.files[0];
-
     const compressed = await imageCompression(file,{
         maxSizeMB:0.3,
         maxWidthOrHeight:1280,
         useWebWorker:true,
         initialQuality:0.8
     });
-
     const slot = input.parentElement;
-
     let img = slot.querySelector("img");
-
     if(!img){
-
         img = document.createElement("img");
         slot.appendChild(img);
-
     }
-
     img.src = URL.createObjectURL(compressed);
-
     slot.classList.add("has-img");
-
     const icon = slot.querySelector("i");
-
     if(icon) icon.style.display = "none";
-
     state.signupPhotos[idx] = compressed;
-
 }
 
+// Submit a new vendor listing. This function validates the current auth session,
+// inserts the business into Supabase, uploads photos, and links uploaded images.
 export async function submitVendor(event) {
     event.preventDefault();
-     showLoader("Submitting your business...");
+    showLoader("Submitting your business...");
     const form = event.target;
 
     const {
@@ -76,7 +68,6 @@ export async function submitVendor(event) {
         town: state.location.town
     };
 
-    // Create the business
     const { data, error } = await supabase
         .from("businesses")
         .insert(business)
@@ -85,23 +76,19 @@ export async function submitVendor(event) {
 
     if (error) {
         console.error("Business creation error:", error);
-        hideLoader()
+        hideLoader();
         showToast("Error creating business: " + error.message);
         return;
     }
 
     try {
-
-        // Upload photos to Storage
         const photoUrls = await uploadBusinessPhotos(data.id);
 
-        // Save photo URLs to the database
         if (photoUrls.length > 0) {
-
             const imageRows = photoUrls.map(url => ({
                 business_id: data.id,
                 image_url: url,
-                is_cover: photoUrls.indexOf(url) === 0 // 
+                is_cover: photoUrls.indexOf(url) === 0
             }));
 
             const { error: imageError } = await supabase
@@ -113,36 +100,31 @@ export async function submitVendor(event) {
                 showToast("Business created, but images couldn't be linked.");
                 return;
             }
-
         }
+
         hideLoader();
         showToast("Your business is now live!");
         state.location = {
-    lat: null,
-    lng: null,
-    address: "",
-    town: ""
-};
+            lat: null,
+            lng: null,
+            address: "",
+            town: ""
+        };
         go("home");
-
     } catch (err) {
-
         console.error("Photo upload error:", err);
         showToast("Business created, but photo upload failed.");
-
     }
-
 }
 
+// Register a new vendor account with email/password and store the user's full name in metadata.
 export async function registerVendor(event) {
   event.preventDefault();
 
   const form = event.target;
-
   const full_name = form.full_name.value;
   const email = form.email.value;
   const password = form.password.value;
-
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -154,69 +136,55 @@ export async function registerVendor(event) {
     }
   });
 
-
   if (error) {
     console.error(error);
     showToast("Error creating account: " + error.message);
     return;
   }
 
-
-
   showToast("Account created. Now add your business details.");
-
-  // move to listing form
   window.go('add');
 }
 
+// Handle vendor login form submission.
+// Signs in with Supabase and reloads app data after success.
 export async function loginVendor(event){
-
     event.preventDefault();
-
     const form = event.target;
-
     const email = form.email.value.trim();
     const password = form.password.value;
 
     const { data, error } = await supabase.auth.signInWithPassword({
-
         email,
         password
-
     });
 
     if(error){
-
         showToast("Error signing in: " + error.message);
         return;
-
     }
 
-
-
-const check = await supabase.auth.getSession();
-
+    const check = await supabase.auth.getSession();
     showToast("Welcome back!");
-
     await load();
-
     window.go("my");
-
 }
 
+// Ensure the user is logged in before showing the add business screen.
 export async function openAddListing() {
-
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       showToast("You must be logged in to add a business.");
-        window.go("login");
-        return;
+      window.go("login");
+      return;
     }
 
     window.go("add");
 }
 
+// Upload all selected signup photos for a business to Supabase storage.
+// Returns an array of public URLs for the uploaded images.
 export async function uploadBusinessPhotos(businessId) {
     const photoUrls = [];
     for (let i = 0; i < state.signupPhotos.length; i++) {

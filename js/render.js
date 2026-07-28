@@ -1,6 +1,8 @@
 import { state } from './state.js';
 import { $, esc, makePlaceholder, timeAgo,isOwner } from './utils.js';
 
+// Render a single category card used in the category grid.
+// Clicking the card calls pickCategory with the category ID.
 export function catCard(c){
 	return `
 	<div class="cat-card" onclick="pickCategory('${c.id}')">
@@ -10,8 +12,14 @@ export function catCard(c){
 		<span>${c.name}</span>
 	</div>`;
 }
-export function renderCategories(){ $('#cat-grid').innerHTML = state.cats.map(catCard).join(''); }
 
+// Render all category cards inside the category grid element.
+export function renderCategories(){
+	$('#cat-grid').innerHTML = state.cats.map(catCard).join('');
+}
+
+// Create a vendor card for home, explore, or my listings.
+// If editable=true the card opens the edit flow, otherwise it opens the profile.
 export function vCard(v, editable = false){
     const cat = {name: v.categoryName || 'Vendor'};
 	const cover = v.images?.find(img => img.is_cover);
@@ -40,8 +48,9 @@ export function vCard(v, editable = false){
 		</div>`;
 }
 
+// Filter vendors by search query, town, and category.
+// Returns active vendors sorted by newest first.
 export function filteredVendors(q, town, cat) {
-
     q = (q || "")
         .trim()
         .replace(/\s+/g, " ")
@@ -52,7 +61,6 @@ export function filteredVendors(q, town, cat) {
     return state.vendors
         .filter(v => v.isActive)
         .filter(v => {
-
             const searchable = [
                 v.name,
                 v.description,
@@ -81,19 +89,20 @@ export function filteredVendors(q, town, cat) {
                 v.category === cat;
 
             return matchTown && matchQ && matchCat;
-
         })
         .sort((a, b) => b.createdAt - a.createdAt);
-
 }
 
+// Render the home screen vendor list using the home search input value.
 export function renderHome(){
 	const q = $('#home-search').value;
 	const list = filteredVendors(q, state.selectedTown);
-	$('#home-list').innerHTML = list.length ? list.slice(0,8).map(v=>vCard(v)).join('')
+	$('#home-list').innerHTML = list.length
+		? list.slice(0,8).map(v=>vCard(v)).join('')
 		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>No vendors found. Be the first to list!</div></div>`;
 }
 
+// Render the explore screen vendor list and heading for the selected category.
 export function renderExplore(){
 	const q = $('#explore-search').value;
 	const heading = state.activeExploreCat ? state.cats.find(c=>c.id===state.activeExploreCat)?.name + ' vendors' : 'All vendors';
@@ -104,35 +113,41 @@ export function renderExplore(){
 		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>No vendors match your search.</div></div>`;
 }
 
-export function openProfile(id){ state.currentProfileId=id; if(window.go) window.go('profile'); }
+// Open the profile screen for the given vendor ID.
+export function openProfile(id){
+	state.currentProfileId=id;
+	if(window.go) window.go('profile');
+}
 
+// Render the profile screen content for a specific vendor.
 export function renderProfile(id){
 	const v = state.vendors.find(x=>x.id===id);
-	if(!v){ if(window.go) window.go('home'); return; }
+	if(!v){
+		if(window.go) window.go('home');
+		return;
+	}
 
 	const owner = isOwner(v);
-const editBtn = $('#header-edit');
+	const editBtn = $('#header-edit');
+	if(editBtn){
+	    editBtn.style.display = owner ? '' : 'none';
+	}
 
-if(editBtn){
-    editBtn.style.display = owner ? '' : 'none';
-}
-
-const pauseBtn = $('#header-pause');
-
-if(pauseBtn){
-
-    pauseBtn.style.display = owner ? '' : 'none';
-    pauseBtn.innerHTML = v.isActive
-        ? '<i class="fa-solid fa-pause"></i>'
-        : '<i class="fa-solid fa-play"></i>';
-    pauseBtn.setAttribute('aria-label', v.isActive ? 'Pause listing' : 'Activate listing');
-
-}
+	const pauseBtn = $('#header-pause');
+	if(pauseBtn){
+	    pauseBtn.style.display = owner ? '' : 'none';
+	    pauseBtn.innerHTML = v.isActive
+	        ? '<i class="fa-solid fa-pause"></i>'
+	        : '<i class="fa-solid fa-play"></i>';
+	    pauseBtn.setAttribute('aria-label', v.isActive ? 'Pause listing' : 'Activate listing');
+	}
 
 	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
 	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
-	const photos =v.images?.length? [ ...(v.images.filter(i => i.is_cover).map(i => i.image_url)),...(v.images.filter(i => !i.is_cover).map(i => i.image_url))]
-        : [makePlaceholder(v.name,0)];
+	const photos = v.images?.length
+	    ? [ ...(v.images.filter(i => i.is_cover).map(i => i.image_url)), ...(v.images.filter(i => !i.is_cover).map(i => i.image_url)) ]
+	    : [makePlaceholder(v.name,0)];
+
 	$('#profile-content').innerHTML = `
 		<div class="profile-hero">
 			<img class="profile-img" src="${photos[0]}" alt="">
@@ -179,23 +194,21 @@ if(pauseBtn){
 
 import { supabase } from './supabase.js';
 
+// Render the current user's business listings in the "Shop Yanga" screen.
 export async function renderMy(){
-
 	const { data:{user} } = await supabase.auth.getUser();
 
 	if(!user){
 		$('#my-list').innerHTML = `
 			<div class="empty">
-				Please login to view your business.
+				Chonde pangani login kuti muwone mndandanda wanu.
 			</div>`;
 		return;
 	}
 
-
 	const list = state.vendors
 		.filter(v=>v.isActive && v.ownerId === user.id)
 		.sort((a,b)=>b.createdAt - a.createdAt);
-
 
 	$('#my-list').innerHTML = list.length
 		? list.map(v=>vCard(v,true)).join('')

@@ -7,11 +7,13 @@ import { renderHome, renderMy, renderProfile } from "./render.js";
 import { showLoader, hideLoader } from "./utils.js";
 import { renderEditImages } from "./image-manager.js";
 
+// Helper to return the currently authenticated user object.
 async function getUser(){
 	const { data:{user} } = await supabase.auth.getUser();
 	return user;
 }
 
+// Open the edit form for a vendor listing, pre-filling fields with current values.
 export async function openEdit(id){
 
     const { data:{user} } = await supabase.auth.getUser();
@@ -52,18 +54,17 @@ export async function openEdit(id){
     $('#edit-sheet').classList.add('open');
 }
 
+// Close the edit overlay and sheet to hide the edit UI.
 export function closeEdit(){
 	$('#edit-overlay').classList.remove('open');
 	$('#edit-sheet').classList.remove('open');
 }
 
+// Persist edits for a business listing, validating ownership first.
 export async function saveEdit(event) {
-
     event.preventDefault();
-
     const form = event.target;
-
-	const { data:{user} } = await supabase.auth.getUser();
+    const { data:{user} } = await supabase.auth.getUser();
 
     if(!user) {
         showToast("Please login first");
@@ -71,9 +72,7 @@ export async function saveEdit(event) {
     }
 
     const id = form.id.value;
-
     const updates = {
-
         name: form.name.value.trim(),
         phone: form.phone.value.trim(),
         whatsapp: form.whatsapp.value.trim(),
@@ -81,9 +80,7 @@ export async function saveEdit(event) {
         town: form.town.value.trim(),
         area: form.area.value.trim(),
         description: form.description.value.trim(),
-
         updated_at: new Date()
-
     };
 
 
@@ -96,26 +93,20 @@ export async function saveEdit(event) {
 
 
     if(error){
-
         console.error(error);
         showToast(error.message);
         return;
-
     }
 
-
     await load();
-
     renderHome();
     renderMy();
     renderProfile(id);
-
     closeEdit();
-
     showToast("Business updated!");
-
 }
 
+// Delete the listing currently loaded into the edit form.
 export async function deleteListing(){
     showLoader("Deleting listing...");
     const id = document.querySelector('#edit-id').value;
@@ -137,115 +128,79 @@ export async function deleteListing(){
         return;
     }
 
-
     if(!confirm("Delete this listing permanently? This cannot be undone.")){
         hideLoader();
         return;
     }
 
-
     try {
-
-        // 1. Get image records
+        // 1. Load image records belonging to this business.
         const { data: images, error: imageFetchError } = await supabase
             .from("business_images")
             .select("image_url")
             .eq("business_id", id);
 
-
         if(imageFetchError) throw imageFetchError;
 
-
-        // 2. Delete files from Storage
+        // 2. Remove each image file from Supabase storage.
         if(images && images.length){
-
             const filePaths = images.map(img => {
-
                 const url = new URL(img.image_url);
-
                 return url.pathname.split("/business-images/")[1];
-
             });
-
 
             const { error: storageError } = await supabase.storage
                 .from("business-images")
                 .remove(filePaths);
 
-
             if(storageError) throw storageError;
-
         }
 
-
-        // 3. Delete image database rows
+        // 3. Delete image rows from the database.
         const { error: imageDeleteError } = await supabase
             .from("business_images")
             .delete()
             .eq("business_id", id);
 
-
         if(imageDeleteError) throw imageDeleteError;
 
-
-        // 4. Delete the business
+        // 4. Delete the business record itself.
         const { error: businessDeleteError } = await supabase
             .from("businesses")
             .delete()
             .eq("id", id);
 
-
         if(businessDeleteError) throw businessDeleteError;
 
-
-
-        // remove locally
         state.vendors = state.vendors.filter(x => x.id !== id);
-
-
         closeEdit();
-
         hideLoader();
         showToast("Listing permanently deleted");
 
-
         if(state.currentScreen === 'profile'){
-
             if(window.go) window.go('my');
-
         } else {
-
             if(window.renderMy) window.renderMy();
-
         }
-
-
     } catch(err){
         hideLoader();
         console.error("Delete listing failed:", err);
         showToast("Could not delete listing.");
-
     }
-
 }
 
+// Handle the header edit action when viewing a vendor profile.
+// Only opens editing if the current user owns the displayed profile.
 export async function headerAction(){
-
     if(!state.currentProfileId) return;
 
-
     const { data:{user} } = await supabase.auth.getUser();
-
     if(!user) return;
-
 
     const v = state.vendors.find(
         x => x.id === state.currentProfileId
     );
 
-
     if(!v || v.ownerId !== user.id) return;
-
-
     openEdit(state.currentProfileId);
 }

@@ -1,5 +1,7 @@
 
 
+// Initialize a Supabase client for use across the app.
+// This client handles authentication, database queries, and storage operations.
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const SUPABASE_URL = "https://xvnmzfetryxzcncmrttw.supabase.co";
