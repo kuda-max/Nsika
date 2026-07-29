@@ -152,7 +152,16 @@ button, input, select, textarea { font-family: inherit; font-size: inherit; colo
 .section-title { font-size: 16px; font-weight: 700; margin: 20px 0 8px; color: var(--text); }
 
 /* Vendor Cards */
-.vendor-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+.vendor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  max-height: 100%;
+}
 .v-card {
  background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 14px;
@@ -390,7 +399,7 @@ input:checked + .slider:before {
 
 .detail-block {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
+  border-radius: var(--radius); padding: 5px; margin-bottom: 12px;
 }
 .detail-block h4 {
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
