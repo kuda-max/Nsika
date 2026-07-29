@@ -28,6 +28,7 @@ export async function openEdit(id){
 
     if(v.ownerId !== user.id){
         console.warn("Unauthorized edit attempt");
+        window.close()
         return;
     }
 
@@ -67,7 +68,7 @@ export async function saveEdit(event) {
     const { data:{user} } = await supabase.auth.getUser();
 
     if(!user) {
-        showToast("Please login first");
+        showToast("Chonde pangani kaye login.");
         return;
     }
 
@@ -103,12 +104,12 @@ export async function saveEdit(event) {
     renderMy();
     renderProfile(id);
     closeEdit();
-    showToast("Business updated!");
+    showToast("Business yanu yasinthidwa!");
 }
 
 // Delete the listing currently loaded into the edit form.
 export async function deleteListing(){
-    showLoader("Deleting listing...");
+    showLoader("Business yanu yikuchotsedwa...");
     const id = document.querySelector('#edit-id').value;
 
     const v = state.vendors.find(x => x.id === id);
@@ -124,11 +125,11 @@ export async function deleteListing(){
 
     if(userError || !user || v.ownerId !== user.id){
         hideLoader();
-        showToast("You can't delete this listing.");
+        showToast("Businessyi singatheke kuchosedwa.");
         return;
     }
 
-    if(!confirm("Delete this listing permanently? This cannot be undone.")){
+    if(!confirm("Business yanu ichotsedwe? mukatero sizitheka kuibwezeletsa.")){
         hideLoader();
         return;
     }
@@ -175,7 +176,7 @@ export async function deleteListing(){
         state.vendors = state.vendors.filter(x => x.id !== id);
         closeEdit();
         hideLoader();
-        showToast("Listing permanently deleted");
+        showToast("Business yanu yachotsedwa.");
 
         if(state.currentScreen === 'profile'){
             if(window.go) window.go('my');
@@ -184,8 +185,8 @@ export async function deleteListing(){
         }
     } catch(err){
         hideLoader();
-        console.error("Delete listing failed:", err);
-        showToast("Could not delete listing.");
+        console.error("Business yanu yakanika kuchotsedwa chifukwa: ", err);
+        showToast("Business yanu yakanika kuchotsedwa.");
     }
 }
 
@@ -204,3 +205,4 @@ export async function headerAction(){
     if(!v || v.ownerId !== user.id) return;
     openEdit(state.currentProfileId);
 }
+

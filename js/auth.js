@@ -44,7 +44,7 @@ export async function logout() {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-        showToast("Error signing out: " + error.message);
+        showToast("Takanka kukupangani sign-out chifukwa: " + error.message);
         return;
     }
 
@@ -53,4 +53,63 @@ export async function logout() {
     renderHome();
     await renderMy();
     window.go("home");
+}
+
+export async function loadProfile(force = false){
+
+    if(state.profile && !force){
+        return state.profile;
+    }
+
+    const {
+        data:{user}
+    } = await supabase.auth.getUser();
+
+    if(!user){
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if(error){
+        console.error(error);
+        return null;
+    }
+
+    state.profile = {
+
+        id: user.id,
+
+        email: user.email,
+
+        fullName: data.full_name,
+
+        phone: data.phone,
+
+        avatar: data.avatar_url
+
+    };
+
+    return state.profile;
+
+}
+
+export async function isLoggedIn(){
+
+    return !!(await getCurrentUser());
+
+}
+
+
+export async function getCurrentUser(){
+
+    const {
+        data:{user}
+    } = await supabase.auth.getUser();
+
+    return user;
 }

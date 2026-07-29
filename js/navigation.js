@@ -52,8 +52,8 @@ export function go(name){
 
   // Set the header title based on the current screen.
   title.textContent = {
-    add:'Join Nsika',
-    my:'Shop Yanga',
+    add:'Joinani Nsika',
+    my:'Nsika',
     profile:'Vendor',
     explore:'Fufuzani',
     settings:'Settings'
@@ -65,6 +65,10 @@ export function go(name){
   if(name==='my') renderMy();
   if(name==='add') setTimeout(() => {initSignupMap();}, 100);
   if(name==='profile') renderProfile(state.currentProfileId);
+  if(name=='settings') {
+    loadProfileHeader();
+    settingsEligible();
+  }
 }
 
 // Navigate back from the current screen. If on profile, return to the previous screen,

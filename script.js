@@ -9,6 +9,9 @@ import * as search from './js/search.js';
 import * as auth from './js/auth.js';
 import * as vendor from './js/vendor.js';
 import * as imageManager from './js/image-manager.js';
+import * as settings from './js/settings.js';
+import * as toast from './js/ui.js';
+import * as utils from './js/utils.js';
 
 // Expose functions used by inline handlers in the HTML (keep behavior unchanged)
 window.onSearch = search.onSearch;
@@ -42,6 +45,16 @@ window.togglePause = edit.togglePause;
 
 window.removeBusinessImage = imageManager.removeBusinessImage;
 
+window.openProfileEdit = settings.openProfileEdit;
+window.closeProfileEdit = settings.closeProfileEdit;
+window.loadProfileHeader = settings.loadProfileHeader;
+window.saveProfile = settings.saveProfile;
+window.openPasswordEdit = settings.openPasswordEdit;
+window.changePassword = settings.changePassword;
+window.togglePassword = settings.togglePassword;
+window.showToast = toast.showToast;
+window.settingsEligible = settings.settingsEligible;
+window.isLoggedIn = auth.isLoggedIn;
 
 document.querySelector("#edit-photo-input").addEventListener("change",e=>  imageManager.handleEditPhotos(e.target));
 window.setCoverImage = imageManager.setCoverImage;

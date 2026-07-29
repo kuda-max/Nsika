@@ -42,7 +42,7 @@
 
     <div class="loader">
 
-        <label id="loader-text">Please wait...</label>
+        <label id="loader-text">Dikilani pang'ono...</label>
 
         <div class="loading"></div>
 
@@ -51,17 +51,17 @@
 </div>
 
 <div id="app">
-  <div id="toast" class="toast">Action successful</div>
+  <div id="toast" class="toast">Zatheka</div>
 
   <!-- Screens -->
   <div id="screen-home" class="screen active">
     <div class="search-wrap">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="home-search" placeholder="Search vendors, services…" oninput="onSearch()">
+        <input type="text" id="home-search" placeholder="Setchani ma business…" oninput="onSearch()">
       </div>
       <div class="chip-row" id="home-chips">
-        <button class="chip active" onclick="setTown(this,'All')">All Areas</button>
+        <button class="chip active" onclick="setTown(this,'All')">Madera Onse</button>
         <button class="chip" onclick="setTown(this,'Area 25')">Area 25</button>
         <button class="chip" onclick="setTown(this,'Blantyre CBD')">Blantyre CBD</button>
         <button class="chip" onclick="setTown(this,'Zomba')">Zomba</button>
@@ -72,7 +72,7 @@
     <div class="desktop-home">
               <aside class="category-sidebar">
 
-            <h2 class="section-title">Browse by category</h2>
+            <h2 class="section-title">Sakani Malingana ndi Gulu Lomwe ma Business ali</h2>
 
             <div class="cat-grid" id="cat-grid"></div>
 
@@ -80,7 +80,7 @@
 
         <main>
 
-            <h2 class="section-title">Vendors nearby</h2>
+            <h2 class="section-title">Ma business omwe mulinawo pafupi.</h2>
 
             <div class="vendor-list" id="home-list"></div>
 
@@ -93,18 +93,14 @@
     <div class="search-wrap">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="explore-search" placeholder="Search vendors, services…" oninput="onSearch()">
+        <input type="text" id="explore-search" placeholder="Setchani ma business…" oninput="onSearch()">
       </div>
       <div class="chip-row" id="explore-chips">
-        <button class="chip active" onclick="setTown(this,'All')">All Areas</button>
+        <button class="chip active" onclick="setTown(this,'All')">Madera Onse</button>
         <button class="chip" onclick="setTown(this,'Area 25')">Area 25</button>
         <button class="chip" onclick="setTown(this,'Blantyre CBD')">Blantyre CBD</button>
         <button class="chip" onclick="setTown(this,'Zomba')">Zomba</button>
         <button class="chip" onclick="setTown(this,'Mzuzu')">Mzuzu</button>
-
-        <button class="chip" onclick="logout()">
-    Logout
-</button>
       </div>
     </div>
 
@@ -113,7 +109,7 @@
     <div>
 
         <div class="section-title" id="explore-heading">
-            All vendors
+            Ma Business onse
         </div>
 
         <div class="vendor-list" id="explore-list"></div>
@@ -129,7 +125,7 @@
   </div>
 
 
-  <div id="screen-settings" class="screen max-width-sm active">
+  <div id="screen-settings" class="screen max-width-sm">
   
   <!-- Profile Header Card -->
   <div class="user-profile-header">
@@ -138,24 +134,43 @@
       <span class="avatar-badge"></span>
     </div>
     <div class="user-details" style="flex: 1;">
-      <h3>Alex Johnson</h3>
-      <p>alex.johnson@example.com</p>
+        <h3 id="settings-name"></h3>
+        <p id="settings-email"></p>
     </div>
-    <button class="btn btn-outline" onclick="showToast('Edit profile clicked')">Edit</button>
+    <button class="btn btn-outline" onclick="openProfileEdit()">Edit</button>
+  </div>
+
+  <div class="settings-group" id="guest-card" style="display:none">
+    <div class="settings-group-title">Alendo</div>
+    <div class="settings-card">
+      <div class="guest-card-body">
+        <div class="guest-card-icon">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="guest-card-content">
+          <div class="guest-card-title">Takulandilani!</div>
+          <div class="guest-card-text">Pangani sign-in kuti mupange manage Account yanu, muyike business komanso kuti ma details anu abwere.</div>
+        </div>
+        <div class="guest-card-actions">
+          <button class="btn btn-outline btn-full" onclick="go('login')">Sign In</button>
+          <button class="btn btn-primary btn-full" onclick="go('register')">Account yatsopano</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Account & Security Section -->
-  <div class="settings-group">
+  <div class="settings-group" id="account-settings">
     <div class="settings-group-title">Account Settings</div>
     <div class="settings-card">
-      <div class="settings-item" onclick="showToast('Opening Personal Information')">
+      <div class="settings-item" onclick="openProfileEdit()">
         <div class="settings-item-left">
           <div class="settings-item-icon">
             <i class="fa-solid fa-user"></i>
           </div>
           <div>
-            <div class="settings-label">Personal Information</div>
-            <div class="settings-sublabel">Update name, email, and phone</div>
+            <div class="settings-label">Information Yanu</div>
+            <div class="settings-sublabel">Sinthani dzina, email, komanso phone number.</div>
           </div>
         </div>
         <div class="settings-item-right">
@@ -163,14 +178,14 @@
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('Security settings opened')">
+      <div class="settings-item" onclick="openPasswordEdit()">
         <div class="settings-item-left">
           <div class="settings-item-icon">
             <i class="fa-solid fa-lock"></i>
           </div>
           <div>
-            <div class="settings-label">Security & Password</div>
-            <div class="settings-sublabel">2FA, Password change</div>
+            <div class="settings-label"> Password</div>
+            <div class="settings-sublabel">Kusintha password</div>
           </div>
         </div>
         <div class="settings-item-right">
@@ -182,7 +197,7 @@
 
   <!-- Appearance & Display -->
   <div class="settings-group">
-    <div class="settings-group-title">Preferences</div>
+    <div class="settings-group-title">Zofuna zanu.</div>
     <div class="settings-card">
       <div class="settings-item">
         <div class="settings-item-left">
@@ -190,8 +205,8 @@
             <i class="fa-solid fa-moon"></i>
           </div>
           <div>
-            <div class="settings-label">Dark Mode</div>
-            <div class="settings-sublabel">Toggle app theme</div>
+            <div class="settings-label">Screen ya Black</div>
+            <div class="settings-sublabel">Sinthani theme ya app</div>
           </div>
         </div>
         <div class="settings-item-right">
@@ -208,13 +223,13 @@
             <i class="fa-solid fa-bell"></i>
           </div>
           <div>
-            <div class="settings-label">Push Notifications</div>
-            <div class="settings-sublabel">Enable alerts & updates</div>
+            <div class="settings-label">Ma Notifications</div>
+            <div class="settings-sublabel">akubwera posachedwapa</div>
           </div>
         </div>
         <div class="settings-item-right">
           <label class="switch">
-            <input type="checkbox" checked onchange="showToast('Notification preference saved')">
+            <input type="checkbox" checked onchange="showToast('akubwera posachedwapa')">
             <span class="slider"></span>
           </label>
         </div>
@@ -226,13 +241,13 @@
             <i class="fa-solid fa-location-dot"></i>
           </div>
           <div>
-            <div class="settings-label">Location Services</div>
-            <div class="settings-sublabel">Allow app to use GPS</div>
+            <div class="settings-label">Location</div>
+            <div class="settings-sublabel">Lolani app kugwiritsa ntchito location yanu?</div>
           </div>
         </div>
         <div class="settings-item-right">
           <label class="switch">
-            <input type="checkbox" checked onchange="showToast('Location permission updated')">
+            <input type="checkbox" checked onchange="showToast('Location yatheka')">
             <span class="slider"></span>
           </label>
         </div>
@@ -244,19 +259,19 @@
   <div class="settings-group">
     <div class="settings-group-title">System</div>
     <div class="settings-card">
-      <div class="settings-item" onclick="showToast('Cache cleared successfully!')">
+      <div class="settings-item" onclick="showToast('Cache yachotsedwa!')">
         <div class="settings-item-left">
           <div class="settings-item-icon">
             <i class="fa-solid fa-trash"></i>
           </div>
           <div>
-            <div class="settings-label">Clear App Cache</div>
-            <div class="settings-sublabel">Frees up 24.5 MB</div>
+            <div class="settings-label">Chotsani App Cache</div>
+            <div class="settings-sublabel">imachotsa cache yomwe app yi yabweretsa</div>
           </div>
         </div>
       </div>
 
-      <div class="settings-item" onclick="showToast('Logging out...')">
+      <div class="settings-item" id="lb" onclick="logout()">
         <div class="settings-item-left">
           <div class="settings-item-icon" style="background: rgba(192, 57, 43, 0.1); color: var(--danger);">
             <i class="fa-solid fa-right-from-bracket"></i>
@@ -275,23 +290,23 @@
   <div id="screen-register" class="screen">
 
   <h2 class="section-title">
-   Account Creation
+   Kupanga Account
   </h2>
 
   <p class="small">
-    Create an account first, then add your business details.
+    Pangani account, kenako ikani ma details a business yanu.
   </p>
 
 
   <form class="form" onsubmit="registerVendor(event)">
 
     <div class="form-group">
-      <label>Your Name</label>
+      <label>Dzina lanu</label>
       <input 
         type="text" 
         name="full_name"
         required
-        placeholder="e.g. Grace Banda">
+        placeholder="mwachitsanzo: Grace Banda">
     </div>
 
 
@@ -301,42 +316,42 @@
     type="email"
     name="email"
     required
-    placeholder="e.g. grace@gmail.com">
+    placeholder="mwachitsanzo: grace@gmail.com">
 </div>
 
 
     <div class="form-group">
-      <label>Create Password</label>
+      <label>Password</label>
       <input
         type="password"
         name="password"
         required
-        placeholder="Create a password">
+        placeholder="Ikani password">
     </div>
 
 
     <button 
       type="submit"
       class="btn btn-primary btn-full">
-      Continue
+      Pitilizani
     </button>
 
   </form>
 <p class="small" style="text-align:center;margin-top:16px;">
-Already have an account?
+Account muli nayo kale?
 
 <a href="#" onclick="go('login')">
-Login
+dinani apa
 </a>
 </p>
 </div>
 
 <div id="screen-login" class="screen">
 
-  <h2 class="section-title">Welcome Back</h2>
+  <h2 class="section-title">Takulandilani!</h2>
 
   <p class="small" style="margin-bottom:18px;">
-    Login to manage your business.
+    Pangani login kuti mupange manage business yanu.
   </p>
 
   <form class="form" onsubmit="loginVendor(event)">
@@ -347,7 +362,7 @@ Login
         type="email"
         name="email"
         required
-        placeholder="you@example.com">
+        placeholder="mwachitsanzo: kudaliwe@gmail.com">
     </div>
 
     <div class="form-group">
@@ -356,7 +371,7 @@ Login
         type="password"
         name="password"
         required
-        placeholder="Your password">
+        placeholder="password yanu">
     </div>
 
     <button
@@ -370,57 +385,59 @@ Login
 </div>
 
   <div id="screen-add" class="screen">
-    <h2 class="section-title" style="margin-top:6px;">Add Yout Business</h2>
-    <p class="small" style="margin-bottom:18px;">Create a free listing so customers can find and contact you.</p>
+    <h2 class="section-title" style="margin-top:6px;">Ikani Business Yanu</h2>
+    <p class="small" style="margin-bottom:18px;">Ikani Business kuti ma customer azitha kukupezani mosavuta.</p>
     <form class="form" onsubmit="submitVendor(event)">
       <div class="form-group">
-        <label>Business / Your Name</label>
-        <input type="text" name="name" required placeholder="e.g. Grace's Tailoring">
+        <label>Dzina la Business </label>
+        <input type="text" name="name" required placeholder="mwachitsanzo: Grace's Tailoring">
       </div>
       <div class="form-group">
         <label>Phone Number</label>
-        <input type="tel" name="phone" required placeholder="e.g. +265 99 123 4567">
+        <input type="tel" name="phone" required placeholder="mwachitsanzo: +265 991234567">
       </div>
       <div class="form-group">
-        <label>WhatsApp Number (optional)</label>
-        <input type="tel" name="whatsapp" placeholder="Same as phone if blank">
+        <label>WhatsApp Number (ngati mulinayo)</label>
+        <input type="tel" name="whatsapp" placeholder="musalembepo ngati mulibe">
       </div>
       <div class="form-group">
         <label>Category</label>
-        <select name="category" required id="signup-category"><option value="">Pick a category</option></select>
+        <select name="category" required id="signup-category"><option value="">Sankhani gulu lomwe Business yanu ili.</option></select>
       </div>
       <div class="form-group">
-        <label>Short Description</label>
-        <textarea name="description" required placeholder="What do you offer?"></textarea>
+        <label>Tayifotokozeni Business yanu pang'ono</label>
+        <textarea name="description" required placeholder="Kodi Business yanu ndiyotani,ndipo ma customer asankhe inu chifukwa chai?"></textarea>
       </div>
 
         <div class="form-group">
 
-    <label>Business Location</label>
+    <label>Business Yanu ili pati?</label>
     
     <small id="location-status">
-        Finding your location...
+        Tukusaka location yanu...
     </small>
 <div id="signup-map"></div>
     
 
 </div>
       <div class="form-group">
-        <label>Photos (up to 3)</label>
+        <label>Zithunzi (malire ndi 5)</label>
         <div class="photo-slots" id="signup-photos">
           <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,0)"></div>
           <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,1)"></div>
           <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,2)"></div>
+          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,3)"></div>
+          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,4)"></div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-full">Create Listing</button>
+      <button type="submit" class="btn btn-primary btn-full">Ikani Business yi</button>
     </form>
   </div>
 
   <div id="screen-my" class="screen">
-    <h2 class="section-title" style="margin-top:6px;">My Business</h2>
+    <h2 class="section-title" style="margin-top:6px;">Business yanga</h2>
     <div class="vendor-list" id="my-list"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="openMyBusiness()">+ Add New Business</button>
+    <button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="openMyBusiness()">+ Ikani Business</button>
   </div>
 
   <!-- Header -->
@@ -450,15 +467,15 @@ Login
 
     <button class="nav-item" onclick="openExploreAll()" id="nav-explore">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <span>Explore</span>
+      <span>Fufuzani</span>
     </button>
     <button class="nav-item" onclick="openMyBusiness()" id="nav-add">
       <i class="fa-solid fa-plus"></i>
-      <span>Add</span>
+      <span>Ikani</span>
     </button>
     <button class="nav-item" onclick="go('my')" id="nav-my">
       <i class="fa-solid fa-store"></i>
-      <span>My Shop</span>
+      <span>Business yanga</span>
     </button>
 
          <button class="nav-item" onclick="go('settings')" id="nav-settings">
@@ -524,6 +541,21 @@ Login
 
 
   </div>
+
+  <!-- profile sheet -->
+   <div id="profile-overlay" class="sheet-overlay" onclick="closeProfileEdit()"></div>
+    <div id="profile-sheet" class="sheet">
+
+    <div class="sheet-handle"></div>
+
+    <h3 id="profile-sheet-title"></h3>
+
+    <p class="subtitle" id="profile-sheet-subtitle"></p>
+
+    <div id="profile-sheet-body"></div>
+
+</div>
+
 </div>
 <script type="module" src="js/supabase.js"></script>
 <script type="module" src="script.js"></script>

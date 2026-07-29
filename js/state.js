@@ -17,5 +17,6 @@ export const state = {
 		address: "",
 		town: ""
 	},
+	profile: null
 };
 

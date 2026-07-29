@@ -10,7 +10,7 @@ import { showLoader, hideLoader } from "./utils.js";
 // The selected parameter controls which category option should be pre-selected.
 export function populateSelect(elId, selected=''){
 	const sel = document.getElementById(elId);
-	sel.innerHTML = '<option value="">Pick a category</option>' + state.cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.name}</option>`).join('');
+	sel.innerHTML = '<option value="">Sankhani gulu lomwe business lanu ili </option>' + state.cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.name}</option>`).join('');
 }
 
 // Handle image selection on a signup photo input.
@@ -41,7 +41,7 @@ export async function handlePhoto(input, idx){
 // inserts the business into Supabase, uploads photos, and links uploaded images.
 export async function submitVendor(event) {
     event.preventDefault();
-    showLoader("Submitting your business...");
+    showLoader("business yanu ikulowetsedwa mmakina athu...");
     const form = event.target;
 
     const {
@@ -51,7 +51,7 @@ export async function submitVendor(event) {
 
     if (userError || !user) {
         hideLoader();
-        showToast("You must be logged in to submit a business.");
+        showToast("Mukuyenera kupanga login kuti muyike business yanu.");
         return;
     }
 
@@ -77,7 +77,7 @@ export async function submitVendor(event) {
     if (error) {
         console.error("Business creation error:", error);
         hideLoader();
-        showToast("Error creating business: " + error.message);
+        showToast("Business yanu yakanika kuyikidwa chifukwa: " + error.message);
         return;
     }
 
@@ -97,13 +97,13 @@ export async function submitVendor(event) {
 
             if (imageError) {
                 console.error("Image DB error:", imageError);
-                showToast("Business created, but images couldn't be linked.");
+                showToast("Business yapangidwa,koma zithunzi zanu sizinaikidwe.");
                 return;
             }
         }
 
         hideLoader();
-        showToast("Your business is now live!");
+        showToast("Business yanu ili live tsopano!");
         state.location = {
             lat: null,
             lng: null,
@@ -113,7 +113,7 @@ export async function submitVendor(event) {
         go("home");
     } catch (err) {
         console.error("Photo upload error:", err);
-        showToast("Business created, but photo upload failed.");
+        showToast("Business yayikidwa, koma zithunzi zanu zakanika.");
     }
 }
 
@@ -142,7 +142,7 @@ export async function registerVendor(event) {
     return;
   }
 
-  showToast("Account created. Now add your business details.");
+  showToast("Account yapangidwa, tsopano ikani ma details a business yanu.");
   window.go('add');
 }
 
@@ -160,12 +160,12 @@ export async function loginVendor(event){
     });
 
     if(error){
-        showToast("Error signing in: " + error.message);
+        showToast("Takanika kukupangani sign-in chifukwa: " + error.message);
         return;
     }
 
     const check = await supabase.auth.getSession();
-    showToast("Welcome back!");
+    showToast("Takulandilani!");
     await load();
     window.go("my");
 }
@@ -175,7 +175,7 @@ export async function openAddListing() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      showToast("You must be logged in to add a business.");
+      showToast("Mukuyenera kupanga login kuti muyike business yanu.");
       window.go("login");
       return;
     }

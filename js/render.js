@@ -41,8 +41,8 @@ export function vCard(v, editable = false){
 				<div class="v-meta"><i class="fa-solid fa-location-dot"></i> ${esc(v.town)}</div>
 				${editable ? '' : `
 				<div class="v-actions">
-					<a class="btn btn-primary" href="tel:${v.phone}"><i class="fa-solid fa-phone"></i> Call</a>
-					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Message</a>
+					<a class="btn btn-primary" href="tel:${v.phone}"><i class="fa-solid fa-phone"></i> Imbani</a>
+					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Message pa Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;
@@ -99,7 +99,7 @@ export function renderHome(){
 	const list = filteredVendors(q, state.selectedTown);
 	$('#home-list').innerHTML = list.length
 		? list.slice(0,8).map(v=>vCard(v)).join('')
-		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>No vendors found. Be the first to list!</div></div>`;
+		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>Palibe ma Business omwe apezeka. khalani oyamba kuyika Business!</div></div>`;
 }
 
 // Render the explore screen vendor list and heading for the selected category.
@@ -110,7 +110,7 @@ export function renderExplore(){
 	const list = filteredVendors(q, state.selectedTown, state.activeExploreCat);
 	$('#explore-list').innerHTML = list.length
 		? list.map(v=>vCard(v)).join('')
-		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>No vendors match your search.</div></div>`;
+		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>Palibe ma Business omwe afanana ndizomwe mapanga Search.</div></div>`;
 }
 
 // Open the profile screen for the given vendor ID.
@@ -185,7 +185,7 @@ export function renderProfile(id){
 					<h4>Details</h4>
 					<p>Phone: ${esc(v.phone)}</p>
 					<p>Category: ${esc(cat.name)}</p>
-					<p style="margin-top:8px; color:var(--text-muted); font-size:13px;">Listed ${timeAgo(v.createdAt)}</p>
+					<p style="margin-top:8px; color:var(--text-muted); font-size:13px;">inayikidwa ${timeAgo(v.createdAt)}</p>
 				</div>
 			</div>
 		</div>
@@ -214,6 +214,6 @@ export async function renderMy(){
 		? list.map(v=>vCard(v,true)).join('')
 		: `<div class="empty">
 			<i class="fa-solid fa-store"></i>
-			<div>No listings yet. Add your first shop.</div>
+			<div>Simunayike Business yanu.</div>
 		</div>`;
 }

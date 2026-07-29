@@ -4,11 +4,11 @@ import { showLoader, hideLoader} from "./utils.js";
 // Obtain the user's current geographic position and display it on the signup map.
 export function getBusinessLocation(){
     if(!navigator.geolocation){
-        showToast("Geolocation isn't supported.");
+        showToast("Geolocation siyotheka mu chipangizo chanuchi.");
         return;
     }
 
-    showLoader("Getting your location...");
+    showLoader("Tikusaka Dela lanu...");
 
     navigator.geolocation.getCurrentPosition(
         position=>{
@@ -53,7 +53,7 @@ export function getBusinessLocation(){
         },
         ()=>{
             hideLoader();
-            showToast("Couldn't get your location.");
+            showToast("Takanika kupeza Dela lanu.");
         }
     );
 }
@@ -112,7 +112,7 @@ export async function initSignupMap(){
 
     if(!navigator.geolocation){
         document.getElementById("location-status").textContent =
-            "Location isn't supported.";
+            "Delali silololedwa.";
         return;
     }
 
@@ -140,7 +140,7 @@ export async function initSignupMap(){
         },
         ()=>{
             document.getElementById("location-status").textContent =
-                "Location unavailable. Tap the map.";
+                "Dera silikupezeka. Dinani pa malo omwe business yanu ili pa map.";
         }
     );
 }

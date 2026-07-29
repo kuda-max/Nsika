@@ -13,7 +13,7 @@ export function renderEditImages(v){
     if(!v.images || v.images.length === 0){
         container.innerHTML = `
             <p style="color:var(--text-muted);">
-                No photos uploaded yet.
+                Zithunzi sizinayikedwe.
             </p>
         `;
         return;
@@ -21,7 +21,7 @@ export function renderEditImages(v){
 
     container.innerHTML = `
         <h4 style="margin-bottom:10px;">
-            Photos (${v.images.length}/5)
+            Zinthunzi (${v.images.length}/5)
         </h4>
         <div class="edit-photo-grid">
         ${v.images.map(img => `
@@ -34,13 +34,13 @@ export function renderEditImages(v){
                     : `<button
                             type="button"
                             onclick="setCoverImage('${img.id}')">
-                            Set Cover
+                            ikhale Cover?
                     </button>`
                 }
                 <button
                     type="button"
                     onclick="removeBusinessImage('${img.id}')">
-                    Delete
+                    Chotsani
                 </button>
             </div>
             </div>
@@ -50,11 +50,11 @@ export function renderEditImages(v){
 }
 
 export async function removeBusinessImage(imageId){
-    if(!confirm("Delete this photo?")){
+    if(!confirm("Chichotsedwe chithunzichi?")){
         return;
     }
 
-    showLoader("Deleting photo...");
+    showLoader("Chithunzi chznu chikuchotsedwa...");
 
     try {
         const vendorId = document.querySelector("#edit-id").value;
@@ -66,7 +66,7 @@ export async function removeBusinessImage(imageId){
         if (countError) throw countError;
 
         if (count <= 1) {
-            showToast("A business must have at least one photo.");
+            showToast("Business yikuyenera kukhala ndi chithunzi.");
             hideLoader();
             return;
         }
@@ -129,10 +129,10 @@ export async function removeBusinessImage(imageId){
             renderEditImages(updatedVendor);
         }
 
-        showToast("Photo deleted");
+        showToast("Chithunzi chija chachotsedwa.");
     } catch(err){
         console.error("Delete image error:", err);
-        showToast("Could not delete photo");
+        showToast("Takanika kukuchotserani chithunzichi.");
     }
 
     hideLoader();
@@ -161,7 +161,7 @@ export async function handleEditPhotos(input){
     if(currentCount + files.length > 5){
 
         showToast(
-            `You can only have 5 photos maximum`
+            `Malire azithunzi zomwe mungayike ndi 5`
         );
 
         input.value = "";
@@ -170,7 +170,7 @@ export async function handleEditPhotos(input){
     }
 
 
-    showLoader("Uploading photos...");
+    showLoader("Zithunzi zanu zikuyikidwa...");
 
 
     try{
@@ -233,43 +233,30 @@ export async function handleEditPhotos(input){
 
         }
 
-
-
         await load();
-
 
         const updatedVendor =
             state.vendors.find(
                 v=>v.id===id
             );
 
-
         renderEditImages(updatedVendor);
-
-
-        showToast("Photos added");
-
-
+        showToast("Zithunzi zayikidwa.");
         input.value="";
-
-
     }
     catch(err){
 
         console.error(err);
-        showToast("Upload failed");
+        showToast("Zinthunzi zakanika kuyikidwa");
 
     }
-
-
     hideLoader();
-
 }
 
 // Set a new cover photo for the listing by clearing the current cover flag
 // and marking the selected image as the new cover.
 export async function setCoverImage(imageId){
-    showLoader("Updating cover...");
+    showLoader("Cover yanu yikusinthidwa...");
 
     try{
         const businessId = document.querySelector("#edit-id").value;
@@ -298,7 +285,7 @@ export async function setCoverImage(imageId){
         showToast("Cover updated");
     } catch(err){
         console.error(err);
-        showToast("Couldn't update cover");
+        showToast("Takanika kusintha cover ya business yanu");
     }
 
     hideLoader();

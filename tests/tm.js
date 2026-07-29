@@ -1,4 +1,5 @@
 import { supabase } from "../js/supabase.js";
+import { showToast } from "../js/ui.js";
 
 const input = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
@@ -20,10 +21,6 @@ input.addEventListener("change", async () => {
     });
 
     preview.src = URL.createObjectURL(compressedFile);
-
-    console.log("Original:", (file.size / 1024).toFixed(1), "KB");
-    console.log("Compressed:", (compressedFile.size / 1024).toFixed(1), "KB");
-
 });
 
 uploadBtn.addEventListener("click", async () => {
@@ -50,8 +47,6 @@ uploadBtn.addEventListener("click", async () => {
         .from("business-images")
         .getPublicUrl(path);
 
-    console.log("Public URL:", data.publicUrl);
-
-    alert("Upload successful!");
+    showToast("Upload successful!");
 
 });
