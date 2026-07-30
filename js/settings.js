@@ -85,30 +85,45 @@ export async function saveProfile(event){
 
 }
 
-export async function loadProfileHeader(){
+let guestIdentity = null;
 
+function getGuestIdentity() {
+    if (!guestIdentity) {
+        const num = Math.floor(10000 + Math.random() * 90000);
+
+        guestIdentity = {
+            name: `Guest Nsika ${num}`,
+            email: `guest.nsika${num}@gmhz.com`
+        };
+    }
+
+    return guestIdentity;
+}
+
+export async function loadProfileHeader() {
     showLoader("Loading profile...");
 
-    try{
-
+    try {
         const profile = await loadProfile();
 
-        if(!profile) return;
+        const isGuest = !(profile?.email && profile?.fullName);
 
-        $("#settings-name").textContent =
-            profile.fullName || "User";
+        const identity = isGuest
+            ? getGuestIdentity()
+            : {
+                name: profile.fullName,
+                email: profile.email
+            };
 
-        $("#settings-email").textContent =
-            profile.email;
+        $("#settings-name").textContent = identity.name;
+        $("#settings-email").textContent = identity.email;
 
+        document.querySelector(".user-profile-header .btn").style.display =
+            isGuest ? "none" : "";
     }
-
-    finally{
-
+    finally {
         hideLoader();
-
     }
-
 }
 
 export async function openProfileEdit(){

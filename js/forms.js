@@ -128,6 +128,12 @@ export async function submitVendor(event) {
 
         hideLoader();
         showToast("Business yanu ili live tsopano!");
+        confetti({
+            particleCount: 60,
+            spread: 90,
+            origin: { y: 0.6 },
+            colors: ['#B8623F', '#ffffff'] // match--primary + neutral
+        });
         state.location = { lat: null, lng: null, address: "", town: "" };
         go("home");
 

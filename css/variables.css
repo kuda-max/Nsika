@@ -1,26 +1,54 @@
 /**
  * Global Variables & Theme Config
- * Responsible for design tokens, root custom properties, 
+ * Responsible for design tokens, root custom properties,
  * light/dark mode overrides, and system-wide measurements.
  */
 
 :root {
   --font: 'Geist', sans-serif;
+
+  /* color — soft, not pure black/white */
   --bg: #F7F5F2;
-  --surface: #FFFFFF;
+  --surface: #FFFDFC;
   --text: #1F1F21;
   --text-muted: #6E6B66;
   --border: #E8E5E0;
-  --primary: #B8623F;
-  --primary-hover: #964C30;
+
+ --primary: #C65D3B;
+--primary-hover: #A94A2D;
+  --primary-light: color-mix(in srgb, var(--primary) 90%, white 10%);
+  --primary-soft: #F3E6DF;   /* quiet tinted backgrounds — badges, active icons — instead of scattered rgba() */
   --primary-text: #FFFFFF;
   --danger: #C0392B;
-  --radius: 12px;
-  --radius-sm: 8px;
+
+  /* radius — one scale, reused everywhere: cards, inputs, buttons, badges, sheets */
+  --radius-sm: 10px;   /* chips, badges, small buttons */
+  --radius: 16px;      /* cards, inputs, sheet-top corners */
+  --radius-lg: 24px;   /* hero images, large surfaces */
+  --radius-full: 999px; /* pills, avatars, nav */
+
+  /* spacing — 8px system, align everything to this */
   --space: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* shadow — one soft language, used for lift not attention */
+  --shadow-sm: 0 1px 3px rgba(31, 31, 33, 0.06);
+  --shadow: 0 4px 16px rgba(31, 31, 33, 0.08);
+  --shadow-lg: 0 8px 32px rgba(31, 31, 33, 0.12);
+
   --header: 56px;
-  --bottom: 64px;
+  --bottom: calc(60px + (var(--space) * 2));
   color-scheme: light;
+
+    --success: #15803D;
+  --warning: #D97706;
+  --danger: #C0392B;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,9 +58,13 @@
     --text: #F0EDE8;
     --text-muted: #9E9A93;
     --border: #3A3A3C;
-    --primary: #C97A5B;
-    --primary-hover: #B0684A;
+    --primary: #D9825F;
+    --primary-hover: #A94A2D;
+    --primary-soft: #3A2C25;
     --primary-text: #1C1C1E;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
     color-scheme: dark;
   }
 }
@@ -45,6 +77,10 @@
   --border: #3A3A3C;
   --primary: #C97A5B;
   --primary-hover: #B0684A;
+  --primary-soft: #3A2C25;
   --primary-text: #1C1C1E;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
 }

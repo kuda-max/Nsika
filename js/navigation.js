@@ -19,6 +19,7 @@ export const screens = {
 
 // Navigate to a named screen by updating the active screen class,
 export function go(name){
+
   if(name==='profile' && !state.currentProfileId) return;
 
   const applyNav = () => {

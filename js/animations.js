@@ -109,42 +109,103 @@ export function animateThemeToggle(theme, moon, sun){
     };
 }
 
-// Slides a pill-shaped indicator behind the active chip in a chip-row.
-// Call after the .active class has been set on the target chip.
+// Slides a pill-shaped indicator behind the active chip in a chip-row,
+// and gives the active chip itself a small pop. Call after .active
+// has been set on the target chip.
 export function syncChipIndicator(row){
-    const active = row.querySelector('.chip.active');
+    const active = row.querySelector(".chip.active");
     if(!active) return;
 
-    let indicator = row.querySelector('.chip-indicator');
+    let indicator = row.querySelector(".chip-indicator");
+
     const rowRect = row.getBoundingClientRect();
     const targetRect = active.getBoundingClientRect();
-    const targetLeft = targetRect.left - rowRect.left + row.scrollLeft;
-    const targetWidth = targetRect.width;
+    const targetX = targetRect.left - rowRect.left + row.scrollLeft;
+    const targetW =targetRect.width;
 
     if(!indicator){
-        indicator = document.createElement('span');
-        indicator.className = 'chip-indicator';
+
+        indicator = document.createElement("span");
+        indicator.className = "chip-indicator";
+
         row.prepend(indicator);
-        indicator.style.left = targetLeft + 'px';
-        indicator.style.width = targetWidth + 'px';
+
+        indicator.style.transform =`translateX(${targetX}px)`;
+        indicator.style.width =`${targetW}px`;
+        indicator.dataset.x = targetX;
+        indicator.dataset.w = targetW;
+
         return;
     }
 
-    const prevLeft = parseFloat(indicator.style.left) || targetLeft;
-    const prevWidth = parseFloat(indicator.style.width) || targetWidth;
+    const prevX =parseFloat(indicator.dataset.x);
+    const prevW =parseFloat(indicator.dataset.w);
 
-    indicator.style.left = targetLeft + 'px';
-    indicator.style.width = targetWidth + 'px';
+    indicator.dataset.x = targetX;
+    indicator.dataset.w = targetW;
+
+    const movingRight = targetX > prevX;
+    const frames = movingRight ? [
+            {
+                transform:`translateX(${prevX}px)`,
+                width:`${prevW}px`
+            },
+            {
+                transform:`translateX(${prevX}px)`,
+                width:`${targetX - prevX + targetW}px`,
+                offset:.55
+            },
+            {
+                transform:`translateX(${targetX}px)`,
+                width:`${targetW}px`
+            }
+        ]
+        : [
+            {
+                transform:`translateX(${prevX}px)`,
+                width:`${prevW}px`
+            },
+
+            {
+                transform:`translateX(${targetX}px)`,
+                width:`${prevX - targetX + prevW}px`,
+                offset:.55
+            },
+            {
+                transform:`translateX(${targetX}px)`,
+                width:`${targetW}px`
+            }
+        ];
 
     indicator.animate(
+        frames,
+        {
+            duration:300,
+            easing:"cubic-bezier(.22,1,.36,1)",
+            fill:"forwards"
+        }
+    );
+
+    active.animate(
         [
-            { left: prevLeft + 'px', width: prevWidth + 'px' },
-            { left: targetLeft + 'px', width: targetWidth + 'px' }
+            {
+                transform:"scale(1)"
+            },
+            {
+                transform:"scale(1.06)",
+                offset:.5
+            },
+            {
+                transform:"scale(1)"
+            }
         ],
-        { duration: 250, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }
+        {
+
+            duration:220,
+            easing:"ease-out"
+        }
     );
 }
-
 // Fades + scales in an empty-state message (no results / no listings).
 // Call right after setting innerHTML with an `.empty` div.
 export function animateEmptyState(container){
@@ -419,4 +480,18 @@ export function makeSheetDraggable(sheetEl, overlayEl, onDismiss){
 export function resetSheetStyles(sheetEl, overlayEl){
     if(sheetEl) sheetEl.style.transform = '';
     if(overlayEl) overlayEl.style.opacity = '';
+}
+
+export function handleEmptyStateAnimation(el){
+const empty = document.querySelector(el);
+if(empty){
+    lottie.loadAnimation({
+        container: empty,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: "./assets/not-found.json"
+
+    });
+}
 }

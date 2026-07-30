@@ -3,7 +3,7 @@ import { $, esc, makePlaceholder, timeAgo,isOwner, refreshIcons} from './utils.j
 import { showToast } from './ui.js';
 import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
 import { load } from "./storage.js";
-import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll } from "./animations.js";
+import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, handleEmptyStateAnimation } from "./animations.js";
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -46,7 +46,7 @@ return `
 				${editable ? '' : `
 				<div class="v-actions">
 					<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Imbani</a>
-					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
+					<a class="btn btn-outline wa" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;
@@ -103,9 +103,22 @@ export function renderHome(){
 	const list = filteredVendors(q, state.selectedTown);
 	$('#home-list').innerHTML = list.length
 		? list.slice(0,8).map(v=>vCard(v)).join('')
-		: `<div class="empty"><i data-lucide="search"></i><div>Palibe ma Business omwe apezeka. khalani oyamba kuyika Business!</div></div>`;
+		: `
+		
+		<div class="empty">
+
+    <div class="empty-animation"></div>
+
+    <h3>No businesses found</h3>
+
+    <p>
+        Try changing your search or category.
+    </p>
+
+</div>`;
 		animateEmptyState($('#home-list'));
 		refreshIcons();
+		handleEmptyStateAnimation("#screen-home .empty-animation");
 		animateCards();
 }
 
@@ -117,9 +130,23 @@ export function renderExplore(){
 	const list = filteredVendors(q, state.selectedTown, state.activeExploreCat);
 	$('#explore-list').innerHTML = list.length
 		? list.map(v=>vCard(v)).join('')
-		: `<div class="empty"><i data-lucide="search"></i><div>Palibe ma Business omwe afanana ndizomwe mapanga Search.</div></div>`;
+		: `
+		<div class="empty">
+
+    <div class="empty-animation"></div>
+
+    <h3>No businesses found</h3>
+
+    <p>
+        Try changing your search or category.
+    </p>
+
+</div>
+		
+		`;
 		animateEmptyState($('#explore-list'));
 		refreshIcons();
+		handleEmptyStateAnimation("#screen-explore .empty-animation");
 		if(list.length) animateCardsOnScroll($('#explore-list'));
 		else animateEmptyState($('#explore-list'));
 }
