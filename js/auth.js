@@ -43,8 +43,14 @@ export async function logout() {
     showToast("Signing out...");
     const { error } = await supabase.auth.signOut();
 
+    if (!navigator.onLine) {
+
+        showToast("No internet connection.");
+
+    }
+
     if (error) {
-        showToast("Takanka kukupangani sign-out chifukwa: " + error.message);
+        showToast("Takanka kukupangani sign-out");
         return;
     }
 
