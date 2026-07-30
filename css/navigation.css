@@ -1,0 +1,42 @@
+/**
+ * Navigation Components
+ * Controls topbar styling, bottom navigation bar layout, 
+ * icon buttons, and navigation menu active states.
+ */
+
+/* Header Topbar */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--header);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--space);
+  z-index: 100;
+}
+.topbar .title { font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
+
+/* Icon Buttons */
+.icon-btn {
+  width: 40px; height: 40px; border-radius: var(--radius-sm);
+  border: none; background: transparent; color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.icon-btn:active { background: var(--bg); }
+.icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+
+/* Bottom Navigation Bar */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1; border: none; background: none; color: var(--text-muted);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; font-size: 11px; font-weight: 500; cursor: pointer;
+}
+.nav-item svg { width: 24px; height: 24px; stroke-width: 2; }
+.nav-item.active { color: var(--primary); }

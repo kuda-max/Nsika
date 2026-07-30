@@ -1,0 +1,50 @@
+/**
+ * Global Variables & Theme Config
+ * Responsible for design tokens, root custom properties, 
+ * light/dark mode overrides, and system-wide measurements.
+ */
+
+:root {
+  --font: 'Manrope', 'DM Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg: #F7F5F2;
+  --surface: #FFFFFF;
+  --text: #1F1F21;
+  --text-muted: #6E6B66;
+  --border: #E8E5E0;
+  --primary: #B8623F;
+  --primary-hover: #964C30;
+  --primary-text: #FFFFFF;
+  --danger: #C0392B;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --space: 16px;
+  --header: 56px;
+  --bottom: 64px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1C1C1E;
+    --surface: #242426;
+    --text: #F0EDE8;
+    --text-muted: #9E9A93;
+    --border: #3A3A3C;
+    --primary: #C97A5B;
+    --primary-hover: #B0684A;
+    --primary-text: #1C1C1E;
+    color-scheme: dark;
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #1C1C1E;
+  --surface: #242426;
+  --text: #F0EDE8;
+  --text-muted: #9E9A93;
+  --border: #3A3A3C;
+  --primary: #C97A5B;
+  --primary-hover: #B0684A;
+  --primary-text: #1C1C1E;
+  color-scheme: dark;
+}

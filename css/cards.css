@@ -1,0 +1,214 @@
+/**
+ * Card Components & Galleries
+ * Contains styles for categories, vendor cards, seller cards,
+ * image/photo grids, and badges.
+ */
+
+/* Category Grid & Cards */
+.cat-grid {
+  display: flex; 
+  overflow-x: auto; 
+  gap: 10px; 
+  margin: 0 0 20px;
+  padding-bottom: 8px; 
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cat-grid > * { 
+  flex: 0 0 auto; 
+  scroll-snap-align: start; 
+}
+
+.cat-card {
+  background: var(--surface); 
+  border: 1px solid var(--border);
+  border-radius: var(--radius); 
+  padding: 18px 12px; 
+  min-width: 90px; /* Ensures text like "Education & Tutoring" fits nicely */
+  text-align: center; 
+  cursor: pointer;
+  transition: transform .08s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-card:active { 
+  transform: scale(0.98); 
+}
+
+/* Updated to support both Emojis and SVG icons properly */
+.cat-card .cat-icon { 
+  font-size: 24px; 
+  line-height: 1;
+  margin-bottom: 8px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Keeps SVG sizing intact if SVGs are placed inside .cat-icon */
+.cat-card .cat-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2;
+  color: var(--primary);
+}
+
+.cat-card span { 
+  display: block; 
+  font-size: 13px; 
+  font-weight: 600; 
+}
+
+/* Vendor Cards */
+.vendor-list {
+  display: flex; flex-direction: column; gap: 12px;
+  padding-bottom: 8px; overflow-y: auto; overflow-x: hidden;
+  min-height: 0; max-height: 100%;
+}
+.v-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.v-thumb {
+  width: 80px; height: 80px; border-radius: var(--radius-sm);
+  object-fit: cover; background: var(--bg);
+  border: 1px solid var(--border); flex-shrink: 0;
+}
+.v-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.v-info h3 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v-meta { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
+.v-meta svg { width: 14px; height: 14px; stroke-width: 2; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600;
+  padding: 3px 8px; border-radius: 999px;
+  background: rgba(184, 98, 63, 0.08); color: var(--primary);
+  align-self: flex-start;
+}
+.v-actions { display: flex; gap: 8px; margin-top: 2px; }
+
+/* Photo Galleries & Scroll */
+.photo-scroll {
+  display: flex; gap: 10px; overflow-x: auto; padding: 4px 0; scrollbar-width: none;
+}
+.photo-scroll::-webkit-scrollbar { display: none; }
+.photo-scroll img {
+  width: 140px; height: 140px; object-fit: cover; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); flex-shrink: 0; background: var(--bg);
+}
+
+/* Edit Photo Grid Component */
+.edit-photo-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px; margin-bottom: 15px;
+}
+.edit-photo {
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: var(--surface); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.edit-photo::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.35) 100%);
+  border-radius: 12px; pointer-events: none;
+}
+.edit-photo img {
+  display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px;
+}
+.edit-photo-actions {
+  position: absolute; left: 8px; right: 8px; bottom: 8px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  justify-content: space-between; pointer-events: none; z-index: 1;
+}
+.edit-photo-actions > * { pointer-events: auto; }
+.edit-photo-actions button,
+.edit-photo-actions .cover-badge {
+  border: none; border-radius: 999px; padding: 7px 10px;
+  font-size: 12px; font-weight: 600; line-height: 1;
+  background: rgba(255, 255, 255, 0.95); color: #111827;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+.edit-photo-actions button:hover {
+  transform: translateY(-1px); background: #fff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+}
+.edit-photo-actions .cover-badge {
+  background: rgba(250, 204, 21, 0.95); color: #5a3600;
+  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
+}
+
+/* Seller Card (Responsive Layout) */
+.seller-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Stacks vertically by default on mobile */
+.seller-top-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.seller-top-row .profile-desc {
+  flex: 1 1 auto;
+  margin: 0;
+  width: 100%;
+  word-break: break-word; /* Prevents long text/URLs from pushing boundaries */
+}
+
+/* Action buttons take full width on mobile */
+.seller-top-row .profile-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.seller-card .profile-actions .btn {
+  width: 100%;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* Make detail-blocks fit inside container bounds */
+.detail-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Guards against content spill */
+}
+
+.seller-card + .detail-block { 
+  margin-top: 12px; 
+}
+
+/* Ensures sub-text and badges wrap within narrow viewports */
+.profile-sub {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  word-break: break-word;
+}

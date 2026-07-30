@@ -1,0 +1,44 @@
+/**
+ * Global CSS Reset & HTML Basics
+ * Standardizes default browser styles, box sizing, font defaults,
+ * and base element resets across the application.
+ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { 
+  height: 100%; 
+  font-family: var(--font); 
+  background: var(--bg); 
+  color: var(--text); 
+  overflow: hidden; 
+  -webkit-tap-highlight-color: transparent; 
+}
+
+button, input, select, textarea { 
+  font-family: inherit; 
+  font-size: inherit; 
+  color: inherit; 
+}
+
+#app { 
+  height: 100%; 
+  position: relative; 
+}
+
+.section-title { 
+  font-size: 16px; 
+  font-weight: 700; 
+  margin: 20px 0 8px; 
+  color: var(--text); 
+}
+
+.small { 
+  font-size: 13px; 
+  color: var(--text-muted); 
+  line-height: 1.5; 
+}
+
+.danger { 
+  color: var(--danger); 
+}

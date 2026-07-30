@@ -33,6 +33,7 @@ export function go(name){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(['home','explore','add','my','register','login','settings'].includes(name)) {
     $('#nav-'+name).classList.add('active');
+    console.log(name)
   }
 
   const backBtn = $('#header-back');
@@ -54,7 +55,7 @@ export function go(name){
   title.textContent = {
     add:'Joinani Nsika',
     my:'Nsika',
-    profile:'Vendor',
+    profile:'Business',
     explore:'Fufuzani',
     settings:'Settings'
   }[name] || 'Nsika';
