@@ -3,10 +3,13 @@ import { supabase } from "./supabase.js";
 import { showLoader, hideLoader } from "./utils.js";
 import { renderEditImages } from "./image-manager.js";
 import { showToast } from "./ui.js";
+import { renderSkeletonCards } from "./animations.js";
+import {$} from "./utils.js";
 
 // Load the latest businesses and categories from Supabase into the shared state.
 export async function load() {
-    showLoader("Tikutsitsa ma business ndi magulu...");
+    renderSkeletonCards($('#home-list'), 5);
+    renderSkeletonCards($('#explore-list'), 6);
 
     try {
         const [businessesResult, categoriesResult] = await Promise.all([

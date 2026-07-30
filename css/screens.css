@@ -11,6 +11,7 @@
   padding: calc(var(--header) + var(--space)) var(--space) calc(var(--bottom) + var(--space));
   opacity: 0; pointer-events: none; transition: opacity .18s ease;
   background: var(--bg);
+  -webkit-overflow-scrolling: touch;
 }
 .screen.active { opacity: 1; pointer-events: auto; }
 .screen::-webkit-scrollbar { width: 6px; }
@@ -100,3 +101,25 @@
   overflow: hidden; border: 1px solid var(--border); margin-top: 10px;
 }
 #location-status { margin-top: 12px; font-size: 14px; color: var(--text-muted); }
+
+.ptr-indicator {
+  position: absolute;
+  top: calc(var(--header) + var(--space));
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 6;
+  opacity: 0;
+  transform: translate(-50%, -20px) scale(0.6);
+  pointer-events: none;
+}
+.ptr-indicator svg { width: 18px; height: 18px; color: var(--primary); }
+.ptr-indicator.spinning svg { animation: ptr-spin 0.6s linear infinite; }
+@keyframes ptr-spin { to { transform: rotate(360deg); } }

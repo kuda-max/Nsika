@@ -20,7 +20,7 @@
 }
 .sheet.open { transform: translateY(0); }
 .sheet-handle {
-  width: 40px; height: 4px; border-radius: 4px; background: var(--border); margin: 0 auto 16px;
+  width: 40px; height: 4px; border-radius: 4px; background: var(--border); margin: 0 auto 16px; touch-action: none;
 }
 .sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 .sheet .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }

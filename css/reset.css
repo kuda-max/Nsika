@@ -4,7 +4,7 @@
  * and base element resets across the application.
  */
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0;  font-family:"Geist",sans-serif;}
 
 html, body { 
   height: 100%; 
@@ -12,6 +12,8 @@ html, body {
   background: var(--bg); 
   color: var(--text); 
   overflow: hidden; 
+  line-height:1.55;
+  letter-spacing:-0.01em;
   -webkit-tap-highlight-color: transparent; 
 }
 
@@ -41,4 +43,33 @@ button, input, select, textarea {
 
 .danger { 
   color: var(--danger); 
+}
+h1,h2,h3{
+    letter-spacing:-0.03em;
+}
+input,
+textarea,
+button,
+select{
+
+    font:inherit;
+
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-old(root) {
+  animation-name: nsika-slide-out;
+}
+::view-transition-new(root) {
+  animation-name: nsika-slide-in;
+}
+@keyframes nsika-slide-out {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes nsika-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
 }

@@ -1,5 +1,9 @@
 import { state } from './state.js';
-import { $, esc, makePlaceholder, timeAgo,isOwner } from './utils.js';
+import { $, esc, makePlaceholder, timeAgo,isOwner, refreshIcons} from './utils.js';
+import { showToast } from './ui.js';
+import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
+import { load } from "./storage.js";
+import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll } from "./animations.js";
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -31,18 +35,18 @@ export function vCard(v, editable = false){
 
     const wa = (v.whatsapp || v.phone).replace(/\D/g,'');
     const phone = v.phone.replace(/\D/g,'');
-
-    return `
- <div class="v-card">
+	
+return `
+ <div class="v-card" data-id="${v.id}">
 			<img class="v-thumb" src="${img}" alt="" ${editable ? `onclick="openEdit('${v.id}')"` : `onerror="this.src='${makePlaceholder(v.name,0)}'"  onclick="openProfile('${v.id}')"`}>
 			<div class="v-info">
 				<h3 ${editable ? `onclick="openEdit('${v.id}')"` : `onclick="openProfile('${v.id}')"`}>${esc(v.name)}</h3>
 				<div class="badge">${esc(cat.name)}</div>
-				<div class="v-meta"><i class="fa-solid fa-location-dot"></i> ${esc(v.town)}</div>
+				<div class="v-meta"><i data-lucide="map-pin"></i> ${esc(v.town)}</div>
 				${editable ? '' : `
 				<div class="v-actions">
-					<a class="btn btn-primary" href="tel:${v.phone}"><i class="fa-solid fa-phone"></i> Imbani</a>
-					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Message pa Whatsapp</a>
+					<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Imbani</a>
+					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;
@@ -99,7 +103,10 @@ export function renderHome(){
 	const list = filteredVendors(q, state.selectedTown);
 	$('#home-list').innerHTML = list.length
 		? list.slice(0,8).map(v=>vCard(v)).join('')
-		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>Palibe ma Business omwe apezeka. khalani oyamba kuyika Business!</div></div>`;
+		: `<div class="empty"><i data-lucide="search"></i><div>Palibe ma Business omwe apezeka. khalani oyamba kuyika Business!</div></div>`;
+		animateEmptyState($('#home-list'));
+		refreshIcons();
+		animateCards();
 }
 
 // Render the explore screen vendor list and heading for the selected category.
@@ -110,7 +117,11 @@ export function renderExplore(){
 	const list = filteredVendors(q, state.selectedTown, state.activeExploreCat);
 	$('#explore-list').innerHTML = list.length
 		? list.map(v=>vCard(v)).join('')
-		: `<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><div>Palibe ma Business omwe afanana ndizomwe mapanga Search.</div></div>`;
+		: `<div class="empty"><i data-lucide="search"></i><div>Palibe ma Business omwe afanana ndizomwe mapanga Search.</div></div>`;
+		animateEmptyState($('#explore-list'));
+		refreshIcons();
+		if(list.length) animateCardsOnScroll($('#explore-list'));
+		else animateEmptyState($('#explore-list'));
 }
 
 // Open the profile screen for the given vendor ID.
@@ -150,24 +161,24 @@ export function renderProfile(id){
 
 	$('#profile-content').innerHTML = `
 		<div class="profile-hero">
-			<img class="profile-img" src="${photos[0]}" alt="">
+			<img class="profile-img skeleton-shimmer" src="${photos[0]}" alt="">
 			<div class="seller-card">
 				<div class="profile-title">${esc(v.name)}</div>
 				<div class="profile-sub">
 					<span class="badge">${esc(cat.name)}</span>
-					<span class="v-meta" style="color:var(--text-muted)"><i class="fa-solid fa-location-dot"></i> ${esc(v.address || v.town)}</span>
+					<span class="v-meta" style="color:var(--text-muted)"><i data-lucide="map-pin"></i> ${esc(v.address || v.town)}</span>
 				</div>
 
 				<div class="seller-top-row">
 					<div class="profile-desc">${esc(v.description)}</div>
 					<div class="profile-actions">
-						<a class="btn btn-primary" href="tel:${v.phone}"><i class="fa-solid fa-phone"></i> Call</a>
-						<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+						<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Call</a>
+						<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> WhatsApp</a>
 						${v.latitude && v.longitude ? `
 <a class="btn btn-outline"
    target="_blank"
    href="https://www.google.com/maps?q=${v.latitude},${v.longitude}">
-    <i class="fa-solid fa-location-arrow"></i>
+    <i data-lucide="navigation-2"></i>
     Directions
 </a>
 ` : ""}
@@ -190,6 +201,14 @@ export function renderProfile(id){
 			</div>
 		</div>
 	`;
+	const img = document.querySelector(".profile-img");
+img.onload = () => {
+    img.classList.remove('skeleton-shimmer');
+    animateImage(img);
+};
+img.onerror = () => {
+    img.classList.remove('skeleton-shimmer'); // avoid infinite shimmer on broken image URLs
+};
 }
 
 import { supabase } from './supabase.js';
@@ -216,4 +235,35 @@ export async function renderMy(){
 			<i class="fa-solid fa-store"></i>
 			<div>Simunayike Business yanu.</div>
 		</div>`;
+}
+
+export async function retryConnection(){
+
+    if(!navigator.onLine){
+
+        showToast("Still offline.");
+
+        return;
+
+    }
+
+    hideOffline();
+
+    showLoader("Loading...");
+
+    try{
+
+        await load();
+
+        renderHome();
+
+    }
+    catch(err){
+        console.error(err);
+        showOffline();
+    }
+    finally{
+
+        hideLoader();
+    }
 }

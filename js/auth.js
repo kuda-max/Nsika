@@ -3,6 +3,7 @@ import { load } from "./storage.js";
 import { renderHome, renderMy } from "./render.js";
 import { showToast } from "./ui.js";
 import { state } from "./state.js";
+import { requireInternet } from "./network.js";
 
 // Sign up a new user with email and password via Supabase.
 // Returns the raw response so callers can handle success or error.
@@ -40,28 +41,38 @@ export async function currentUser() {
 // Logout workflow that clears local state, reloads vendor data,
 // re-renders home/my views, and navigates the app to home.
 export async function logout() {
+
+    if(!requireInternet(false)) return;
+
     showToast("Signing out...");
+
     const { error } = await supabase.auth.signOut();
 
-    if (!navigator.onLine) {
+    if(error){
 
-        showToast("No internet connection.");
+        console.error("Logout error:", error);
 
-    }
+        showToast("Couldn't sign you out. Please try again.");
 
-    if (error) {
-        showToast("Takanka kukupangani sign-out");
         return;
+
     }
 
     await load();
+
     state.user = null;
+
     renderHome();
+
     await renderMy();
+
     window.go("home");
+
 }
 
 export async function loadProfile(force = false){
+
+    if (!requireInternet(false)) return;
 
     if(state.profile && !force){
         return state.profile;
@@ -112,7 +123,7 @@ export async function isLoggedIn(){
 
 
 export async function getCurrentUser(){
-
+    if (!requireInternet(false)) return;
     const {
         data:{user}
     } = await supabase.auth.getUser();

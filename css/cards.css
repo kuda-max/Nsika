@@ -78,16 +78,31 @@ main {
   flex-direction: column;
   gap: 12px;
   padding-bottom: 16px;
-  
-  flex: 1; /* Grow to take all remaining space */
-  min-height: 0; /* CRITICAL: Allows flex child to shrink below content size */
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; /* Smooth inertia scrolling on mobile */
+    flex: none;
+  min-height: 0;
+  overflow: visible;
 }
 .v-card {
+  position: relative; /* anchor for the syncing dot */
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 14px;
   display: flex; gap: 14px; align-items: flex-start;
+}
+
+.v-card.is-syncing::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: sync-pulse 1s ease-in-out infinite;
+}
+@keyframes sync-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 .v-thumb {
   width: 80px; height: 80px; border-radius: var(--radius-sm);
@@ -226,4 +241,32 @@ main {
   gap: 8px;
   margin-bottom: 14px;
   word-break: break-word;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.skeleton-thumb {
+  width: 80px; height: 80px; border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+.skeleton-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
+.skeleton-line { height: 12px; border-radius: 4px; }
+.skeleton-line.title { height: 15px; width: 60%; }
+.skeleton-line.w-40 { width: 40%; }
+.skeleton-line.w-80 { width: 80%; }
+
+.profile-img.skeleton-shimmer {
+  min-height: 220px; /* matches your existing .profile-img sizing — adjust if different */
 }

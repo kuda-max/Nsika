@@ -5,6 +5,7 @@ import { showToast } from './ui.js';
 import { load } from "./storage.js";
 import { supabase } from "./supabase.js";
 import { showLoader, hideLoader } from "./utils.js";
+import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
 
 // Populate a category select element with options from the loaded category list.
 // The selected parameter controls which category option should be pre-selected.
@@ -83,9 +84,10 @@ export async function submitVendor(event) {
 
     try {
         const photoUrls = await uploadBusinessPhotos(data.id);
+        let imageRows = [];
 
         if (photoUrls.length > 0) {
-            const imageRows = photoUrls.map(url => ({
+            imageRows = photoUrls.map(url => ({
                 business_id: data.id,
                 image_url: url,
                 is_cover: photoUrls.indexOf(url) === 0
@@ -98,25 +100,49 @@ export async function submitVendor(event) {
             if (imageError) {
                 console.error("Image DB error:", imageError);
                 showToast("Business yapangidwa,koma zithunzi zanu sizinaikidwe.");
-                return;
             }
         }
 
+        // Merge the new vendor into local state directly instead of a
+        // full load() round-trip — makes it show up immediately.
+        const newVendor = {
+            id: String(data.id),
+            ownerId: data.owner_id,
+            name: data.name,
+            phone: data.phone,
+            whatsapp: data.whatsapp,
+            category: data.category_id,
+            categoryName: state.cats.find(c => c.id === data.category_id)?.name ?? "",
+            address: data.address,
+            town: data.town,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            description: data.description,
+            photoUrls: photoUrls,
+            images: imageRows.map((row, i) => ({ image_url: row.image_url, is_cover: i === 0 })),
+            createdAt: new Date(data.created_at).getTime(),
+            isActive: data.is_active
+        };
+
+        state.vendors.unshift(newVendor);
+
         hideLoader();
         showToast("Business yanu ili live tsopano!");
-        state.location = {
-            lat: null,
-            lng: null,
-            address: "",
-            town: ""
-        };
+        state.location = { lat: null, lng: null, address: "", town: "" };
         go("home");
+
+        // New vendor lands first (state.vendors is createdAt-desc sorted
+        // and we unshifted) — animate just that card in.
+        requestAnimationFrame(() => {
+            const firstCard = document.querySelector('#home-list .v-card');
+            if(firstCard && firstCard.dataset.id === newVendor.id) animateCardIn(firstCard);
+        });
     } catch (err) {
         console.error("Photo upload error:", err);
+        hideLoader(); // was missing in the original — loader would hang forever on this path
         showToast("Business yayikidwa, koma zithunzi zanu zakanika.");
     }
 }
-
 // Register a new vendor account with email/password and store the user's full name in metadata.
 export async function registerVendor(event) {
   event.preventDefault();
@@ -139,6 +165,15 @@ export async function registerVendor(event) {
   if (error) {
     console.error(error);
     showToast("Error creating account: " + error.message);
+
+    const msg = error.message.toLowerCase();
+    if(msg.includes('email') || msg.includes('registered')){
+        shakeField(form.email);
+    } else if(msg.includes('password')){
+        shakeField(form.password);
+    } else {
+        shakeSubmit(form);
+    }
     return;
   }
 
@@ -148,6 +183,8 @@ export async function registerVendor(event) {
 
 // Handle vendor login form submission.
 // Signs in with Supabase and reloads app data after success.
+
+
 export async function loginVendor(event){
     event.preventDefault();
     const form = event.target;
@@ -161,6 +198,8 @@ export async function loginVendor(event){
 
     if(error){
         showToast("Takanika kukupangani sign-in chifukwa: " + error.message);
+        shakeField(form.email);
+        shakeField(form.password);
         return;
     }
 

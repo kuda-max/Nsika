@@ -4,11 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="color-scheme" content="light dark">
-<title>Nsika — Local Vendor Directory</title>
+<title>Nsika — Bwalo lamabusiness</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/navigation.css">
@@ -20,42 +27,15 @@
 <link rel="stylesheet" href="css/cards.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<style>
-  .search-box i,
-  .icon-btn i,
-  .nav-item i,
-  .photo-slot i,
-  .btn i,
-  .profile-actions .btn i,
-  .empty i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    line-height: 1;
-    color: inherit;
-  }
-  .search-box i { font-size: 0.95rem; }
-  .icon-btn i { font-size: 1.1rem; }
-  .nav-item i { font-size: 1.05rem; }
-  .photo-slot i { font-size: 1.35rem; }
-  .btn i { font-size: 0.95rem; }
-  .empty i { font-size: 2.5rem; margin-bottom: 14px; opacity: 0.55; }
-</style>
 </head>
 <body>
 
   <div id="global-loader" class="loader-overlay">
-
     <div class="loader">
-
         <label id="loader-text">Dikilani pang'ono...</label>
-
         <div class="loading"></div>
-
     </div>
-
-</div>
+  </div>
 
 <div id="app">
   <div id="toast" class="toast">Zatheka</div>
@@ -63,25 +43,16 @@
   <!-- Screens -->
 
   <div id="offline-screen" class="offline-screen hidden">
-
-    <i class="fa-solid fa-wifi-slash"></i>
-
+    <i data-lucide="wifi-off"></i>
     <h2>You're offline</h2>
-
-    <p>
-        Check your internet connection and try again.
-    </p>
-
-    <button class="btn btn-primary" onclick="retryConnection()">
-        Try Again
-    </button>
-
-</div>
+    <p>Check your internet connection and try again.</p>
+    <button class="btn btn-primary" onclick="retryConnection()">Try Again</button>
+  </div>
 
   <div id="screen-home" class="screen active">
     <div class="search-wrap">
       <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <i data-lucide="search"></i>
         <input type="text" id="home-search" placeholder="Setchani ma business…" oninput="onSearch()">
       </div>
       <div class="chip-row" id="home-chips">
@@ -94,29 +65,22 @@
     </div>
 
     <div class="desktop-home">
-              <aside class="category-sidebar">
-
+        <aside class="category-sidebar">
             <h2 class="section-title">Sakani Malingana ndi Gulu Lomwe ma Business ali</h2>
-
             <div class="cat-grid" id="cat-grid"></div>
-
         </aside>
 
         <main>
-
             <h2 class="section-title">Ma business omwe mulinawo pafupi.</h2>
-
             <div class="vendor-list" id="home-list"></div>
-
         </main>
     </div>
-
   </div>
 
   <div id="screen-explore" class="screen">
     <div class="search-wrap">
       <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <i data-lucide="search"></i>
         <input type="text" id="explore-search" placeholder="Setchani ma business…" oninput="onSearch()">
       </div>
       <div class="chip-row" id="explore-chips">
@@ -128,26 +92,19 @@
       </div>
     </div>
 
-<div class="desktop-explore">
-
-    <div>
-
-        <div class="section-title" id="explore-heading">
-            Ma Business onse
+    <div class="desktop-explore">
+        <div>
+            <div class="section-title" id="explore-heading">
+                Ma Business onse
+            </div>
+            <div class="vendor-list" id="explore-list"></div>
         </div>
-
-        <div class="vendor-list" id="explore-list"></div>
-
     </div>
-
-</div>
-
   </div>
 
   <div id="screen-profile" class="screen">
     <div id="profile-content"></div>
   </div>
-
 
   <div id="screen-settings" class="screen max-width-sm">
   
@@ -169,7 +126,7 @@
     <div class="settings-card">
       <div class="guest-card-body">
         <div class="guest-card-icon">
-          <i class="fa-solid fa-user"></i>
+          <i data-lucide="user"></i>
         </div>
         <div class="guest-card-content">
           <div class="guest-card-title">Takulandilani!</div>
@@ -190,7 +147,7 @@
       <div class="settings-item" onclick="openProfileEdit()">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-user"></i>
+            <i data-lucide="user"></i>
           </div>
           <div>
             <div class="settings-label">Information Yanu</div>
@@ -198,22 +155,22 @@
           </div>
         </div>
         <div class="settings-item-right">
-          <i class="fa-solid fa-chevron-right"></i>
+          <i data-lucide="chevron-right"></i>
         </div>
       </div>
 
       <div class="settings-item" onclick="openPasswordEdit()">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-lock"></i>
+            <i data-lucide="lock"></i>
           </div>
           <div>
-            <div class="settings-label"> Password</div>
+            <div class="settings-label">Password</div>
             <div class="settings-sublabel">Kusintha password</div>
           </div>
         </div>
         <div class="settings-item-right">
-          <i class="fa-solid fa-chevron-right"></i>
+          <i data-lucide="chevron-right"></i>
         </div>
       </div>
     </div>
@@ -226,7 +183,7 @@
       <div class="settings-item">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-moon"></i>
+            <i data-lucide="moon"></i>
           </div>
           <div>
             <div class="settings-label">Screen ya Black</div>
@@ -244,7 +201,7 @@
       <div class="settings-item">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-bell"></i>
+            <i data-lucide="bell"></i>
           </div>
           <div>
             <div class="settings-label">Ma Notifications</div>
@@ -262,7 +219,7 @@
       <div class="settings-item">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-location-dot"></i>
+            <i data-lucide="map-pin"></i>
           </div>
           <div>
             <div class="settings-label">Location</div>
@@ -286,7 +243,7 @@
       <div class="settings-item" onclick="showToast('Cache yachotsedwa!')">
         <div class="settings-item-left">
           <div class="settings-item-icon">
-            <i class="fa-solid fa-trash"></i>
+            <i data-lucide="trash-2"></i>
           </div>
           <div>
             <div class="settings-label">Chotsani App Cache</div>
@@ -298,7 +255,7 @@
       <div class="settings-item" id="lb" onclick="logout()">
         <div class="settings-item-left">
           <div class="settings-item-icon" style="background: rgba(192, 57, 43, 0.1); color: var(--danger);">
-            <i class="fa-solid fa-right-from-bracket"></i>
+            <i data-lucide="log-out"></i>
           </div>
           <div>
             <div class="settings-label danger">Log Out</div>
@@ -310,103 +267,52 @@
 
 </div>
 
-
   <div id="screen-register" class="screen">
+    <h2 class="section-title">Kupanga Account</h2>
+    <p class="small">Pangani account, kenako ikani ma details a business yanu.</p>
 
-  <h2 class="section-title">
-   Kupanga Account
-  </h2>
+    <form class="form" onsubmit="registerVendor(event)">
+      <div class="form-group">
+        <label>Dzina lanu</label>
+        <input type="text" name="full_name" required placeholder="mwachitsanzo: Grace Banda">
+      </div>
 
-  <p class="small">
-    Pangani account, kenako ikani ma details a business yanu.
-  </p>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" required placeholder="mwachitsanzo: grace@gmail.com">
+      </div>
 
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Ikani password">
+      </div>
 
-  <form class="form" onsubmit="registerVendor(event)">
+      <button type="submit" class="btn btn-primary btn-full">Pitilizani</button>
+    </form>
+    
+    <p class="small" style="text-align:center;margin-top:16px;">
+      Account muli nayo kale? <a href="#" onclick="go('login')">dinani apa</a>
+    </p>
+  </div>
 
-    <div class="form-group">
-      <label>Dzina lanu</label>
-      <input 
-        type="text" 
-        name="full_name"
-        required
-        placeholder="mwachitsanzo: Grace Banda">
-    </div>
+  <div id="screen-login" class="screen">
+    <h2 class="section-title">Takulandilani!</h2>
+    <p class="small" style="margin-bottom:18px;">Pangani login kuti mupange manage business yanu.</p>
 
+    <form class="form" onsubmit="loginVendor(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="mwachitsanzo: kudaliwe@gmail.com">
+      </div>
 
-  <div class="form-group">
-  <label>Email Address</label>
-  <input 
-    type="email"
-    name="email"
-    required
-    placeholder="mwachitsanzo: grace@gmail.com">
-</div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="password yanu">
+      </div>
 
-
-    <div class="form-group">
-      <label>Password</label>
-      <input
-        type="password"
-        name="password"
-        required
-        placeholder="Ikani password">
-    </div>
-
-
-    <button 
-      type="submit"
-      class="btn btn-primary btn-full">
-      Pitilizani
-    </button>
-
-  </form>
-<p class="small" style="text-align:center;margin-top:16px;">
-Account muli nayo kale?
-
-<a href="#" onclick="go('login')">
-dinani apa
-</a>
-</p>
-</div>
-
-<div id="screen-login" class="screen">
-
-  <h2 class="section-title">Takulandilani!</h2>
-
-  <p class="small" style="margin-bottom:18px;">
-    Pangani login kuti mupange manage business yanu.
-  </p>
-
-  <form class="form" onsubmit="loginVendor(event)">
-
-    <div class="form-group">
-      <label>Email</label>
-      <input
-        type="email"
-        name="email"
-        required
-        placeholder="mwachitsanzo: kudaliwe@gmail.com">
-    </div>
-
-    <div class="form-group">
-      <label>Password</label>
-      <input
-        type="password"
-        name="password"
-        required
-        placeholder="password yanu">
-    </div>
-
-    <button
-      type="submit"
-      class="btn btn-primary btn-full">
-      Login
-    </button>
-
-  </form>
-
-</div>
+      <button type="submit" class="btn btn-primary btn-full">Login</button>
+    </form>
+  </div>
 
   <div id="screen-add" class="screen">
     <h2 class="section-title" style="margin-top:6px;">Ikani Business Yanu</h2>
@@ -433,25 +339,20 @@ dinani apa
         <textarea name="description" required placeholder="Kodi Business yanu ndiyotani,ndipo ma customer asankhe inu chifukwa chai?"></textarea>
       </div>
 
-        <div class="form-group">
+      <div class="form-group">
+        <label>Business Yanu ili pati?</label>
+        <small id="location-status">Tukusaka location yanu...</small>
+        <div id="signup-map"></div>
+      </div>
 
-    <label>Business Yanu ili pati?</label>
-    
-    <small id="location-status">
-        Tukusaka location yanu...
-    </small>
-<div id="signup-map"></div>
-    
-
-</div>
       <div class="form-group">
         <label>Zithunzi (malire ndi 5)</label>
         <div class="photo-slots" id="signup-photos">
-          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,0)"></div>
-          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,1)"></div>
-          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,2)"></div>
-          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,3)"></div>
-          <div class="photo-slot"><i class="fa-regular fa-image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,4)"></div>
+          <div class="photo-slot"><i data-lucide="image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,0)"></div>
+          <div class="photo-slot"><i data-lucide="image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,1)"></div>
+          <div class="photo-slot"><i data-lucide="image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,2)"></div>
+          <div class="photo-slot"><i data-lucide="image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,3)"></div>
+          <div class="photo-slot"><i data-lucide="image"></i><input type="file" accept="image/*" onchange="handlePhoto(this,4)"></div>
         </div>
       </div>
       <button type="submit" class="btn btn-primary btn-full">Ikani Business yi</button>
@@ -467,56 +368,53 @@ dinani apa
   <!-- Header -->
   <header class="topbar">
     <button class="icon-btn" id="header-back" onclick="back()" style="display:none;">
-      <i class="fa-solid fa-arrow-left"></i>
+      <i data-lucide="arrow-left"></i>
     </button>
     <div class="title" id="header-title">Nsika</div>
     <button class="icon-btn" id="header-edit" onclick="headerAction()" style="display:none;">
-      <i class="fa-solid fa-pen"></i>
+      <i data-lucide="pencil"></i>
     </button>
     <button class="icon-btn" id="header-pause" aria-label="Pause" onclick="togglePause()" style="display:none;">
-      <i class="fa-solid fa-pause"></i>
+      <i data-lucide="pause"></i>
     </button>
     <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-      <i id="icon-moon" class="fa-solid fa-moon"></i>
-      <i id="icon-sun" class="fa-solid fa-sun" style="display:none"></i>
+      <i id="icon-moon" data-lucide="moon"></i>
+      <i id="icon-sun" data-lucide="sun" style="display:none"></i>
     </button>
   </header>
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="go('home')" id="nav-home">
-      <i class="fa-solid fa-house"></i>
+      <i data-lucide="house"></i>
       <span>Home</span>
     </button>
 
     <button class="nav-item" onclick="openExploreAll()" id="nav-explore">
-      <i class="fa-solid fa-magnifying-glass"></i>
+      <i data-lucide="search"></i>
       <span>Fufuzani</span>
     </button>
     <button class="nav-item" onclick="openMyBusiness()" id="nav-add">
-      <i class="fa-solid fa-plus"></i>
+      <i data-lucide="plus"></i>
       <span>Ikani</span>
     </button>
     <button class="nav-item" onclick="go('my')" id="nav-my">
-      <i class="fa-solid fa-store"></i>
+      <i data-lucide="store"></i>
       <span>Business yanga</span>
     </button>
-        <button class="nav-item" onclick="go('login')" id="nav-login" style="display: none">
-      <i class="fa-solid fa-store"></i>
+    <button class="nav-item" onclick="go('login')" id="nav-login" style="display: none">
+      <i data-lucide="store"></i>
       <span>Business yanga</span>
     </button>
-         <button class="nav-item" onclick="go('settings')" id="nav-settings">
-      <i class="fa-solid fa-gears"></i>
+    <button class="nav-item" onclick="go('settings')" id="nav-settings">
+      <i data-lucide="settings"></i>
       <span>Settings</span>
     </button>
-
-
   </nav>
 
   <!-- Edit Sheet -->
   <div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
   <div class="sheet" id="edit-sheet">
-
     <div class="sheet-handle"></div>
     <h3>Edit Business</h3>
     <p class="subtitle">Update your details so customers reach you.</p>
@@ -553,39 +451,32 @@ dinani apa
 
       <div id="edit-images"></div>
       <div class="form-group">
-    <label>Add Photos</label>
-
-    <input 
-        type="file"
-        id="edit-photo-input"
-        accept="image/*"
-        multiple
-    >
-</div>
+        <label>Add Photos</label>
+        <input type="file" id="edit-photo-input" accept="image/*" multiple>
+      </div>
       <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
       <button type="button" class="btn btn-outline btn-full" style="margin-top:8px; color:var(--danger); border-color:var(--border);" onclick="deleteListing()">Delete Listing</button>
     </form>
-
-
   </div>
 
-  <!-- profile sheet -->
-   <div id="profile-overlay" class="sheet-overlay" onclick="closeProfileEdit()"></div>
-    <div id="profile-sheet" class="sheet">
-
+  <!-- Profile Sheet -->
+  <div id="profile-overlay" class="sheet-overlay" onclick="closeProfileEdit()"></div>
+  <div id="profile-sheet" class="sheet">
     <div class="sheet-handle"></div>
-
     <h3 id="profile-sheet-title"></h3>
-
     <p class="subtitle" id="profile-sheet-subtitle"></p>
-
     <div id="profile-sheet-body"></div>
+  </div>
 
 </div>
 
-</div>
 <script type="module" src="js/supabase.js"></script>
 <script type="module" src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+
+<!-- Initialize Lucide Icons -->
+<script type="module">
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@12/+esm";
+</script>
 </body>
 </html>

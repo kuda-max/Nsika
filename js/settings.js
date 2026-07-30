@@ -4,6 +4,7 @@ import { showToast } from "./ui.js";
 import {loadProfile, isLoggedIn} from "./auth.js";
 import { $ } from "./utils.js";
 import { state } from "./state.js";
+import { resetSheetStyles } from "./animations.js";
 
 export async function settingsEligible(){
     const loggedIn = await isLoggedIn();
@@ -111,7 +112,7 @@ export async function loadProfileHeader(){
 }
 
 export async function openProfileEdit(){
-
+    resetSheetStyles($('#edit-sheet'), $('#edit-overlay'));
     const profile = await loadProfile();
 
     if(!profile) return;
@@ -168,7 +169,7 @@ export async function openProfileEdit(){
 }
 
 export async function openPasswordEdit(){
-
+    resetSheetStyles($('#edit-sheet'), $('#edit-overlay'));
     $("#profile-sheet-title").textContent =
         "Chiteteo ndi Password";
 

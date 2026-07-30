@@ -32,7 +32,23 @@ textarea { resize: vertical; min-height: 90px; }
 }
 
 /* Search Box */
-.search-wrap { padding: 4px 0 6px; }
+.search-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  box-shadow: 0 -100px 0 0 var(--bg); /* fills the overscroll bounce gap above with matching bg */
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+.search-wrap.scrolled {
+  box-shadow:
+    0 -100px 0 0 var(--bg),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--border);
+  margin: 0 calc(var(--space) * -1);
+  padding: 0 var(--space);
+}
+
 .search-box {
   display: flex; align-items: center; gap: 10px;
   background: var(--surface);
@@ -42,7 +58,13 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .search-box:focus-within { border-color: var(--primary); }
 .search-box input { flex: 1; border: none; outline: none; background: transparent; font-size: 16px; }
-.search-box svg { color: var(--text-muted); width: 20px; height: 20px; stroke-width: 2; }
+.search-box svg { 
+  color: var(--text-muted); 
+      width:16px;
+    height:16px;
+    stroke-width:2;
+    flex-shrink:0;
+}
 
 /* Chips */
 .chip-row {
@@ -57,7 +79,30 @@ textarea { resize: vertical; min-height: 90px; }
   cursor: pointer; user-select: none;
 }
 .chip.active { background: var(--primary); color: var(--primary-text); border-color: var(--primary); }
-
+.chip-row {
+  position: relative; /* positioning context for indicator */
+}
+.chip-indicator {
+  position: absolute;
+  top: 10px;                 /* matches chip-row's top padding */
+  height: calc(100% - 14px); /* matches chip-row's 10px+4px vertical padding */
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  z-index: 0;
+  pointer-events: none;
+  transition: none; /* indicator moves via .animate(), not CSS transition */
+}
+.chip {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  transition: color 150ms ease-out;
+}
+.chip.active {
+  background: transparent; /* indicator now provides the active bg */
+  color: var(--primary-text);
+  border-color: var(--primary);
+}
 /* Custom Switch Toggle */
 .switch {
   position: relative; display: inline-block; width: 44px; height: 24px;

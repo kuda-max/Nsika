@@ -93,3 +93,70 @@ export function hideLoader(){
 }
 
 
+export function showOffline(){
+
+    $("#offline-screen").classList.remove("hidden");
+
+}
+export function hideOffline(){
+
+    $("#offline-screen").classList.add("hidden");
+
+}
+
+export function refreshIcons(){
+    lucide.createIcons();
+}
+
+// motion.js
+
+export function animateCards() {
+    const cards = document.querySelectorAll(".v-card", ".cat-card");
+    cards.forEach((card, i) => {
+        card.animate(
+            [
+                {
+                    opacity: 0,
+                    transform: "translateY(12px)"
+                },
+                {
+                    opacity: 1,
+                    transform: "translateY(0)"
+                }
+            ],
+            {
+                duration: 250,
+                delay: i * 30,
+                easing: "ease-out",
+                fill: "both"
+            }
+        );
+    });
+}
+
+export function animateSettings(){
+    const items = document.querySelectorAll(".settings-item");
+    items.forEach((item, index)=>{
+        item.animate(
+            [
+                {
+                    opacity:0,
+                    transform:"translateY(10px)"
+                },
+
+                {
+                    opacity:1,
+                    transform:"translateY(0)"
+                }
+
+            ],
+
+            {
+                duration:250,
+                delay:index*30,
+                easing:"ease-out",
+                fill:"both"
+            }
+        );
+    });
+}
