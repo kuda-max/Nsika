@@ -1,0 +1,29 @@
+{
+  "name": "nsika",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "directories": {
+    "test": "tests"
+  },
+"scripts": {
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuda-max/Nsika.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kuda-max/Nsika/issues"
+  },
+  "homepage": "https://github.com/kuda-max/Nsika#readme",
+  "devDependencies": {
+    "vite": "^8.1.5"
+  }
+}
