@@ -8,13 +8,13 @@ import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll } f
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
 export function catCard(c){
-	return `
-	<div class="cat-card" onclick="pickCategory('${c.id}')">
-		<div class="cat-icon">
-			${c.icon || "📌"}
-		</div>
-		<span>${c.name}</span>
-	</div>`;
+    return `
+    <div class="cat-card" onclick="pickCategory('${c.id}')">
+        <div class="cat-icon">
+            <i data-lucide="${c.icon || "circle"}"></i>
+        </div>
+        <span>${c.name}</span>
+    </div>`;
 }
 
 // Render all category cards inside the category grid element.
@@ -35,7 +35,7 @@ export function vCard(v, editable = false){
 
     const wa = (v.whatsapp || v.phone).replace(/\D/g,'');
     const phone = v.phone.replace(/\D/g,'');
-	
+
 return `
  <div class="v-card" data-id="${v.id}">
 			<img class="v-thumb" src="${img}" alt="" ${editable ? `onclick="openEdit('${v.id}')"` : `onerror="this.src='${makePlaceholder(v.name,0)}'"  onclick="openProfile('${v.id}')"`}>
