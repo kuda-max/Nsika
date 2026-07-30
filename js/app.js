@@ -6,7 +6,7 @@ import { state } from './state.js';
 import { closeEdit } from './edit.js';
 import { closeProfileEdit } from './settings.js';
 import {$} from './utils.js';
-import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable, initPullToRefresh} from './animations.js';
+import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable } from './animations.js';
 
 // Application initialization routine.
 // Loads data, prepares the signup category select, renders initial screens,
@@ -27,10 +27,6 @@ window.addEventListener("online", ()=>{
 document.querySelectorAll('.chip-row').forEach(row => syncChipIndicator(row));
 document.querySelectorAll('form.form').forEach(form => attachShakeValidation(form));
 initStickySearchShadow();
-initPullToRefresh($('#screen-home'), async () => {
-    await load();
-    renderHome();
-});
 }
 
 
