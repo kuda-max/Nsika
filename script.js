@@ -65,4 +65,6 @@ window.retryConnection = render.retryConnection;
 document.querySelector("#edit-photo-input").addEventListener("change",e=>  imageManager.handleEditPhotos(e.target));
 window.setCoverImage = imageManager.setCoverImage;
 
+
+
 init();

@@ -10,9 +10,6 @@ import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, ha
 export function catCard(c){
     return `
     <div class="cat-card" onclick="pickCategory('${c.id}')">
-        <div class="cat-icon">
-            <i data-lucide="${c.icon || "circle"}"></i>
-        </div>
         <span>${c.name}</span>
     </div>`;
 }
@@ -46,7 +43,7 @@ return `
 				${editable ? '' : `
 				<div class="v-actions">
 					<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Imbani</a>
-					<a class="btn btn-outline wa" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
+					<a class="btn btn-outline wa" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;

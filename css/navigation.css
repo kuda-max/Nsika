@@ -7,8 +7,10 @@
 /* Header Topbar */
 .topbar {
   position: fixed; top: 0; left: 0; right: 0; height: var(--header);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 52%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px); /* Safari */
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--space);
   z-index: 100;
@@ -17,19 +19,27 @@
 
 /* Icon Buttons */
 .icon-btn {
-  width: 40px; height: 40px; border-radius: var(--radius-sm);
-  border: none; background: transparent; color: var(--text);
+  width: 44px; height: 44px; border-radius: var(--radius);
+  border: none; background: var(--bg); color: var(--text);
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
 }
-.icon-btn:active { background: var(--bg); }
-.icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+.icon-btn:hover { background: var(--primary-soft); color: var(--primary); }
+.icon-btn:active { background: var(--primary-soft); transform: scale(0.94); }
+.icon-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
 /* Bottom Navigation Bar */
 .bottom-nav {
   position: fixed;
   left: var(--space);
-  right: var(--space);
+  right: var(--space);                                          
   bottom: calc(var(--space) + env(safe-area-inset-bottom));
   height: 60px;
   background: var(--surface);
