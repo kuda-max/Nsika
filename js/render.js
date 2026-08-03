@@ -4,7 +4,8 @@ import { showToast } from './ui.js';
 import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
 import { load } from "./storage.js";
 import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, handleEmptyStateAnimation } from "./animations.js";
-import { distanceKm, formatDistance } from './map.js';
+import { distanceKm, formatDistance, estimatedRoadDistanceKm } from './map.js';
+import { supabase } from './supabase.js';
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -26,6 +27,7 @@ export function vCard(v, editable = false){
     const cat = {name: v.categoryName || 'Vendor'};
     const cover = v.images?.find(img => img.is_cover);
 
+	const owner = isOwner(v);
     const img =
         cover?.image_url ||
         v.photoUrls[0] ||
@@ -34,13 +36,14 @@ export function vCard(v, editable = false){
     const wa = (v.whatsapp || v.phone).replace(/\D/g,'');
     const phone = v.phone.replace(/\D/g,'');
 
-    const hasDistance =
-        state.userLocation.lat != null &&
-        v.latitude != null && v.longitude != null;
+	const hasDistance =
+    !owner &&
+    state.userLocation.lat != null &&
+    v.latitude != null && v.longitude != null;
 
-    const distanceLabel = hasDistance
-        ? formatDistance(distanceKm(state.userLocation.lat, state.userLocation.lng, v.latitude, v.longitude))
-        : null;
+	const distanceLabel = hasDistance
+    ? formatDistance(estimatedRoadDistanceKm(state.userLocation.lat, state.userLocation.lng, v.latitude, v.longitude))
+    : null;
 
     return `
  <div class="v-card" data-id="${v.id}">
@@ -264,49 +267,52 @@ export function openProfile(id){
 
 // Render the profile screen content for a specific vendor.
 export function renderProfile(id){
-	const v = state.vendors.find(x=>x.id===id);
-	if(!v){
-		if(window.go) window.go('home');
-		return;
-	}
+    const v = state.vendors.find(x=>x.id===id);
+    if(!v){
+        if(window.go) window.go('home');
+        return;
+    }
 
-	const owner = isOwner(v);
-	const editBtn = $('#header-edit');
-	if(editBtn){
-	    editBtn.style.display = owner ? '' : 'none';
-	}
+    const owner = isOwner(v);
+    const editBtn = $('#header-edit');
+    if(editBtn){
+        editBtn.style.display = owner ? '' : 'none';
+    }
 
-	const pauseBtn = $('#header-pause');
-	if(pauseBtn){
-	    pauseBtn.style.display = owner ? '' : 'none';
-	    pauseBtn.innerHTML = v.isActive
-	        ? '<i class="fa-solid fa-pause"></i>'
-	        : '<i class="fa-solid fa-play"></i>';
-	    pauseBtn.setAttribute('aria-label', v.isActive ? 'Pause listing' : 'Activate listing');
-	}
+    const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
+    const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
+    const photos = v.images?.length
+        ? [ ...(v.images.filter(i => i.is_cover).map(i => i.image_url)), ...(v.images.filter(i => !i.is_cover).map(i => i.image_url)) ]
+        : [makePlaceholder(v.name,0)];
 
-	const cat = state.cats.find(c=>c.id===v.category) || {name:'Vendor'};
-	const wa = (v.whatsapp||v.phone).replace(/\D/g,'');
-	const photos = v.images?.length
-	    ? [ ...(v.images.filter(i => i.is_cover).map(i => i.image_url)), ...(v.images.filter(i => !i.is_cover).map(i => i.image_url)) ]
-	    : [makePlaceholder(v.name,0)];
+	const hasDistance =
+    !owner &&
+    state.userLocation.lat != null &&
+    v.latitude != null && v.longitude != null;
 
-	$('#profile-content').innerHTML = `
-		<div class="profile-hero">
-			<img class="profile-img skeleton-shimmer" src="${photos[0]}" alt="">
-			<div class="seller-card">
-				<div class="profile-title">${esc(v.name)}</div>
-				<div class="profile-sub">
-					<span class="badge">${esc(cat.name)}</span>
-					<span class="v-meta" style="color:var(--text-muted)"><i data-lucide="map-pin"></i> ${esc(v.address || v.town)}</span>
-				</div>
+	const distanceLabel = hasDistance
+    ? formatDistance(estimatedRoadDistanceKm(state.userLocation.lat, state.userLocation.lng, v.latitude, v.longitude))
+    : null;
 
-				<div class="seller-top-row">
-					<div class="profile-desc">${esc(v.description)}</div>
-					<div class="profile-actions">
-						<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Call</a>
-						<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> WhatsApp</a>
-						${v.latitude && v.longitude ? `
+    $('#profile-content').innerHTML = `
+        <div class="profile-hero">
+            <img class="profile-img skeleton-shimmer" src="${photos[0]}" alt="">
+            <div class="seller-card">
+                <div class="profile-title">${esc(v.name)}</div>
+                <div class="profile-sub">
+                    <span class="badge">${esc(cat.name)}</span>
+                    <span class="v-meta" style="color:var(--text-muted)">
+                        <i data-lucide="map-pin"></i> ${esc(v.address || v.town)}
+                        ${distanceLabel ? `<span class="v-distance">${distanceLabel} away</span>` : ''}
+                    </span>
+                </div>
+
+                <div class="seller-top-row">
+                    <div class="profile-desc">${esc(v.description)}</div>
+                    <div class="profile-actions">
+                        <a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Call</a>
+                        <a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> WhatsApp</a>
+                        ${v.latitude && v.longitude ? `
 <a class="btn btn-outline"
    target="_blank"
    href="https://www.google.com/maps?q=${v.latitude},${v.longitude}">
@@ -314,36 +320,35 @@ export function renderProfile(id){
     Directions
 </a>
 ` : ""}
-					</div>
-				</div>
+                    </div>
+                </div>
 
-				${photos.length>1 ? `
-				<div class="detail-block">
-					<h4>Photos</h4>
-					<div class="photo-scroll">${photos.slice(1).map(u=>`<img src="${u}" alt="">`).join('')}</div>
-				</div>
-				` : ''}
+                ${photos.length>1 ? `
+                <div class="detail-block">
+                    <h4>Photos</h4>
+                    <div class="photo-scroll">${photos.slice(1).map(u=>`<img src="${u}" alt="">`).join('')}</div>
+                </div>
+                ` : ''}
 
-				<div class="detail-block">
-					<h4>Details</h4>
-					<p>Phone: ${esc(v.phone)}</p>
-					<p>Category: ${esc(cat.name)}</p>
-					<p style="margin-top:8px; color:var(--text-muted); font-size:13px;">inayikidwa ${timeAgo(v.createdAt)}</p>
-				</div>
-			</div>
-		</div>
-	`;
-	const img = document.querySelector(".profile-img");
+                <div class="detail-block">
+                    <h4>Details</h4>
+                    <p>Phone: ${esc(v.phone)}</p>
+                    <p>Category: ${esc(cat.name)}</p>
+                    <p style="margin-top:8px; color:var(--text-muted); font-size:13px;">inayikidwa ${timeAgo(v.createdAt)}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    const img = document.querySelector(".profile-img");
 img.onload = () => {
     img.classList.remove('skeleton-shimmer');
     animateImage(img);
 };
 img.onerror = () => {
-    img.classList.remove('skeleton-shimmer'); // avoid infinite shimmer on broken image URLs
+    img.classList.remove('skeleton-shimmer');
 };
 }
 
-import { supabase } from './supabase.js';
 
 // Render the current user's business listings in the "Shop Yanga" screen.
 export async function renderMy(){

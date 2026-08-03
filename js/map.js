@@ -177,6 +177,14 @@ export async function reverseGeocode(lat,lng){
     }
 }
 
+// Straight-line distance underestimates real travel distance since
+// roads aren't straight. This rough multiplier approximates road distance.
+const DETOUR_FACTOR = 1.3;
+
+export function estimatedRoadDistanceKm(lat1, lng1, lat2, lng2){
+    return distanceKm(lat1, lng1, lat2, lng2) * DETOUR_FACTOR;
+}
+
 // Haversine formula — straight-line distance between two coordinates, in km.
 export function distanceKm(lat1, lng1, lat2, lng2){
     const R = 6371;
@@ -202,6 +210,7 @@ export function requestUserLocation(){
                 lng: position.coords.longitude
             };
             if(state.currentScreen === 'home') renderHome();
+            if(state.currentScreen === 'profile') renderProfile(state.currentProfileId);
         },
         () => {
             // denied or unavailable — state.userLocation stays null
@@ -209,7 +218,6 @@ export function requestUserLocation(){
         { timeout: 8000, maximumAge: 5 * 60 * 1000 }
     );
 }
-
 // Formats a km distance for display — meters under 1km, one decimal above.
 export function formatDistance(km){
     if(km < 1) return `${Math.round(km * 1000)}m`;
