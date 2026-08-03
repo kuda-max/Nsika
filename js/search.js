@@ -4,7 +4,7 @@ import { renderHome, renderExplore } from './render.js';
 import { debounce ,syncChipIndicator} from './animations.js';
 
 export const onSearch = debounce(() => {
-    if (state.screen === 'explore') renderExplore();
+    if (state.currentScreen === 'explore') renderExplore();
     else renderHome();
 }, 200);
 

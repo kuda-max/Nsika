@@ -4,6 +4,7 @@ import { showToast } from './ui.js';
 import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
 import { load } from "./storage.js";
 import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, handleEmptyStateAnimation } from "./animations.js";
+import { distanceKm } from './map.js';
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -96,13 +97,27 @@ export function filteredVendors(q, town, cat) {
 
 // Render the home screen vendor list using the home search input value.
 export function renderHome(){
-	const q = $('#home-search').value;
-	const list = filteredVendors(q, state.selectedTown);
-	$('#home-list').innerHTML = list.length
-		? list.slice(0,8).map(v=>vCard(v)).join('')
-		: `
-		
-		<div class="empty">
+    const q = $('#home-search').value;
+    let list = filteredVendors(q, 'All'); // Home no longer reads state.selectedTown
+
+    if(state.userLocation.lat != null){
+        list = [...list].sort((a, b) => {
+            const hasA = a.latitude != null && a.longitude != null;
+            const hasB = b.latitude != null && b.longitude != null;
+            if(!hasA && !hasB) return 0;
+            if(!hasA) return 1;
+            if(!hasB) return -1;
+            const distA = distanceKm(state.userLocation.lat, state.userLocation.lng, a.latitude, a.longitude);
+            const distB = distanceKm(state.userLocation.lat, state.userLocation.lng, b.latitude, b.longitude);
+            return distA - distB;
+        });
+    }
+
+    $('#home-list').innerHTML = list.length
+        ? list.slice(0,8).map(v=>vCard(v)).join('')
+        : `
+        
+        <div class="empty">
 
     <div class="empty-animation"></div>
 
@@ -113,12 +128,11 @@ export function renderHome(){
     </p>
 
 </div>`;
-		animateEmptyState($('#home-list'));
-		refreshIcons();
-		handleEmptyStateAnimation("#screen-home .empty-animation");
-		animateCards();
+        animateEmptyState($('#home-list'));
+        refreshIcons();
+        handleEmptyStateAnimation("#screen-home .empty-animation");
+        animateCards();
 }
-
 // Render the explore screen vendor list and heading for the selected category.
 export function renderExplore(){
 	const q = $('#explore-search').value;

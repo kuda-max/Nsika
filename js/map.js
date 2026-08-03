@@ -175,3 +175,36 @@ export async function reverseGeocode(lat,lng){
         console.error("Reverse geocode error:",err);
     }
 }
+
+// Haversine formula — straight-line distance between two coordinates, in km.
+export function distanceKm(lat1, lng1, lat2, lng2){
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Requests the user's location once, silently. On success, caches it
+// and re-renders Home if that's the current screen. On denial/failure,
+// does nothing — Home's newest-first sort stands as the fallback.
+export function requestUserLocation(){
+    if(!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            state.userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            if(state.currentScreen === 'home') renderHome();
+        },
+        () => {
+            // denied or unavailable — state.userLocation stays null
+        },
+        { timeout: 8000, maximumAge: 5 * 60 * 1000 }
+    );
+}

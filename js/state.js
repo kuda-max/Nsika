@@ -17,6 +17,7 @@ export const state = {
 		address: "",
 		town: ""
 	},
-	profile: null
+	profile: null,
+	userLocation: { lat: null, lng: null },
 };
 

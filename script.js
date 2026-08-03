@@ -57,7 +57,7 @@ window.settingsEligible = settings.settingsEligible;
 window.isLoggedIn = auth.isLoggedIn;
 window.showOffline = utils.showOffline;
 window.hideOffline = utils.hideOffline;
-window.onSearch = search.onSearch;
+
 
 
 window.retryConnection = render.retryConnection;
