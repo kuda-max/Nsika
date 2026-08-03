@@ -1,5 +1,6 @@
 import { state } from "./state.js";
 import { showLoader, hideLoader} from "./utils.js";
+import { renderHome } from "./render.js";
 
 // Obtain the user's current geographic position and display it on the signup map.
 export function getBusinessLocation(){
@@ -207,4 +208,10 @@ export function requestUserLocation(){
         },
         { timeout: 8000, maximumAge: 5 * 60 * 1000 }
     );
+}
+
+// Formats a km distance for display — meters under 1km, one decimal above.
+export function formatDistance(km){
+    if(km < 1) return `${Math.round(km * 1000)}m`;
+    return `${km.toFixed(1)}km`;
 }

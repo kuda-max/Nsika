@@ -4,7 +4,7 @@ import { showToast } from './ui.js';
 import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
 import { load } from "./storage.js";
 import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, handleEmptyStateAnimation } from "./animations.js";
-import { distanceKm } from './map.js';
+import { distanceKm, formatDistance } from './map.js';
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -24,7 +24,7 @@ export function renderCategories(){
 // If editable=true the card opens the edit flow, otherwise it opens the profile.
 export function vCard(v, editable = false){
     const cat = {name: v.categoryName || 'Vendor'};
-	const cover = v.images?.find(img => img.is_cover);
+    const cover = v.images?.find(img => img.is_cover);
 
     const img =
         cover?.image_url ||
@@ -34,24 +34,109 @@ export function vCard(v, editable = false){
     const wa = (v.whatsapp || v.phone).replace(/\D/g,'');
     const phone = v.phone.replace(/\D/g,'');
 
-return `
+    const hasDistance =
+        state.userLocation.lat != null &&
+        v.latitude != null && v.longitude != null;
+
+    const distanceLabel = hasDistance
+        ? formatDistance(distanceKm(state.userLocation.lat, state.userLocation.lng, v.latitude, v.longitude))
+        : null;
+
+    return `
  <div class="v-card" data-id="${v.id}">
 			<img class="v-thumb" src="${img}" alt="" ${editable ? `onclick="openEdit('${v.id}')"` : `onerror="this.src='${makePlaceholder(v.name,0)}'"  onclick="openProfile('${v.id}')"`}>
 			<div class="v-info">
 				<h3 ${editable ? `onclick="openEdit('${v.id}')"` : `onclick="openProfile('${v.id}')"`}>${esc(v.name)}</h3>
 				<div class="badge">${esc(cat.name)}</div>
-				<div class="v-meta"><i data-lucide="map-pin"></i> ${esc(v.town)}</div>
+				<div class="v-meta">
+					<i data-lucide="map-pin"></i> ${esc(v.town)}
+					${distanceLabel ? `<span class="v-distance">${distanceLabel} away</span>` : ''}
+				</div>
 				${editable ? '' : `
 				<div class="v-actions">
 					<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Imbani</a>
-					<a class="btn btn-outline wa" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Whatsapp</a>
+					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;
 }
 
-// Filter vendors by search query, town, and category.
-// Returns active vendors sorted by newest first.
+// Levenshtein edit distance — minimum single-character edits (insert/
+// delete/substitute) to turn `a` into `b`. Used for typo tolerance.
+function editDistance(a, b){
+    if(a === b) return 0;
+    const m = a.length, n = b.length;
+    if(m === 0) return n;
+    if(n === 0) return m;
+
+    let prev = Array.from({ length: n + 1 }, (_, i) => i);
+    for(let i = 1; i <= m; i++){
+        const curr = [i];
+        for(let j = 1; j <= n; j++){
+            curr[j] = a[i - 1] === b[j - 1]
+                ? prev[j - 1]
+                : 1 + Math.min(prev[j - 1], prev[j], curr[j - 1]);
+        }
+        prev = curr;
+    }
+    return prev[n];
+}
+
+// How many typos to tolerate, scaled to word length.
+function typoThreshold(len){
+    if(len <= 3) return 0;
+    if(len <= 5) return 1;
+    return 2;
+}
+
+// Returns a match tier for a query word against one token:
+// 3 = exact, 2 = substring, 1 = typo-tolerant fuzzy match, 0 = no match.
+// Higher tiers rank higher in relevance scoring below.
+function tokenMatchQuality(queryWord, token){
+    if(queryWord === token) return 3;
+    if(token.includes(queryWord)) return 2;
+    const threshold = typoThreshold(queryWord.length);
+    if(Math.abs(token.length - queryWord.length) > threshold) return 0;
+    return editDistance(queryWord, token) <= threshold ? 1 : 0;
+}
+
+// Fields worth searching, weighted by how much a match there should
+// matter — a name match is a much stronger signal than a phone-number
+// substring match.
+const FIELD_WEIGHTS = {
+    name: 5,
+    categoryName: 3,
+    town: 2,
+    area: 2,
+    description: 1,
+    phone: 1,
+    whatsapp: 1
+};
+
+// Sums, across all query words and all weighted fields, the best match
+// tier found for each word in each field. Vendors with no query (browse
+// mode) get a score of 0 for everyone — ranking is a no-op there.
+function relevanceScore(v, words){
+    if(words.length === 0) return 0;
+
+    let score = 0;
+    for(const [field, weight] of Object.entries(FIELD_WEIGHTS)){
+        const value = v[field];
+        if(!value) continue;
+        const tokens = String(value).toLowerCase().split(/\s+/).filter(Boolean);
+
+        for(const qWord of words){
+            let best = 0;
+            for(const token of tokens){
+                const quality = tokenMatchQuality(qWord, token);
+                if(quality > best) best = quality;
+            }
+            score += best * weight;
+        }
+    }
+    return score;
+}
+
 export function filteredVendors(q, town, cat) {
     q = (q || "")
         .trim()
@@ -63,7 +148,7 @@ export function filteredVendors(q, town, cat) {
     return state.vendors
         .filter(v => v.isActive)
         .filter(v => {
-            const searchable = [
+            const searchableText = [
                 v.name,
                 v.description,
                 v.categoryName,
@@ -76,6 +161,8 @@ export function filteredVendors(q, town, cat) {
             .join(" ")
             .toLowerCase();
 
+            const tokens = searchableText.split(/\s+/).filter(Boolean);
+
             const matchTown =
                 town === "All" ||
                 `${v.town} ${v.area}`
@@ -84,7 +171,7 @@ export function filteredVendors(q, town, cat) {
 
             const matchQ =
                 words.length === 0 ||
-                words.every(word => searchable.includes(word));
+                words.every(qWord => tokens.some(token => tokenMatchQuality(qWord, token) > 0));
 
             const matchCat =
                 !cat ||
@@ -92,7 +179,14 @@ export function filteredVendors(q, town, cat) {
 
             return matchTown && matchQ && matchCat;
         })
-        .sort((a, b) => b.createdAt - a.createdAt);
+        .sort((a, b) => {
+            if(words.length > 0){
+                const scoreA = relevanceScore(a, words);
+                const scoreB = relevanceScore(b, words);
+                if(scoreB !== scoreA) return scoreB - scoreA;
+            }
+            return b.createdAt - a.createdAt; // tiebreaker, and the sole sort when browsing with no query
+        });
 }
 
 // Render the home screen vendor list using the home search input value.

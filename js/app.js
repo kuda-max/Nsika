@@ -7,6 +7,7 @@ import { closeEdit } from './edit.js';
 import { closeProfileEdit } from './settings.js';
 import {$} from './utils.js';
 import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable } from './animations.js';
+import { requestUserLocation } from './map.js';
 
 // Application initialization routine.
 // Loads data, prepares the signup category select, renders initial screens,
@@ -104,7 +105,7 @@ export async function init(){
         state.user = data.user;
     }
     uiStuff();
-    dteststuff()
+    requestUserLocation();
 }
 
 

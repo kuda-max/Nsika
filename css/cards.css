@@ -151,6 +151,18 @@ main {
   font-size: 13px;
   color: var(--text-muted);
 }
+
+.v-distance {
+  color: var(--primary);
+  font-weight: 600;
+}
+.v-distance::before {
+  content: '•';
+  margin-right: var(--space-2);
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 .v-meta svg { width: 14px; height: 14px; stroke-width: 2; }
 
 .badge {
