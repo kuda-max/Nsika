@@ -55,7 +55,7 @@
   gap: 4px;
   z-index: 100;
 }
-#nav-toggle{
+#nav-toggle,#nav-analytics,#nav-about{
   display: none;
 }
 .nav-item {

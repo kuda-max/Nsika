@@ -19,21 +19,93 @@
   position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-lg);
-  padding: var(--space-5) var(--space) calc(var(--bottom) + var(--space-5));
+  padding: 0; /* header/body/footer own their padding now */
   transform: translateY(100%); transition: transform .25s ease; z-index: 120;
-  max-height: 92vh; overflow-y: auto;
-
+  max-height: 92vh;
+  overflow: hidden; /* only .sheet-body scrolls now, not the whole sheet */
+  display: flex; flex-direction: column;
   max-width: 1380px;
   margin: 0 auto;
 }
 .sheet.open { transform: translateY(0); }
+
 .sheet-handle {
   width: 40px; height: 4px; border-radius: var(--radius-full);
-  background: var(--border); margin: 0 auto var(--space-4);
+  background: var(--border); margin: var(--space-3) auto 0;
   cursor: grab; touch-action: none;
+  flex-shrink: 0;
 }
+
+.sheet > form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* required for .sheet-body to actually shrink and scroll */
+  overflow: hidden;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sheet-header-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sheet-header-icon svg { width: 20px; height: 20px; stroke-width: 2; }
+.sheet-header-text { flex: 1; min-width: 0; }
+
+.sheet-close {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--bg);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sheet-close:hover { background: var(--primary-soft); color: var(--primary); }
+.sheet-close svg { width: 16px; height: 16px; stroke-width: 2; }
+
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space) calc(var(--bottom) + var(--space-5));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sheet-footer {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.sheet-footer .btn { flex: 1; }
+
+/* Fields grouped in pairs — stacks on mobile, becomes 2-column on
+   desktop via the existing .form-grid-2 grid rule in desktop.css */
+.form-grid-2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: var(--space-1); }
-.sheet .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: var(--space-4); }
+.sheet .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 0; }
 
 /* Toast Notifications */
 .toast {
@@ -89,4 +161,147 @@
 @keyframes loading {
   0% { left: -25%; }
   100% { left: 70%; }
+}
+
+
+.modal-backdrop{
+
+    position:fixed;
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    padding:24px;
+
+    background:rgba(0,0,0,.18);
+
+    backdrop-filter:blur(0px);
+    -webkit-backdrop-filter:blur(0px);
+
+    opacity:0;
+
+    z-index:9999;
+
+    transition:
+        opacity .28s ease,
+        backdrop-filter .28s ease;
+
+}
+
+.modal-backdrop.show{
+
+    opacity:1;
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+}
+
+.confirm-modal{
+
+    width:min(92vw,380px);
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    border-radius:28px;
+
+    padding:28px;
+
+    box-shadow:var(--shadow-lg);
+
+    text-align:center;
+
+    transform:translateY(28px) scale(.94);
+
+    opacity:0;
+
+    transition:
+        transform .38s cubic-bezier(.22,1,.36,1),
+        opacity .25s ease;
+
+}
+
+.modal-backdrop.show .confirm-modal{
+
+    transform:translateY(0) scale(1);
+
+    opacity:1;
+
+}
+
+.confirm-icon{
+
+    width:72px;
+    height:72px;
+
+    margin:0 auto 18px;
+
+    border-radius:50%;
+
+    display:grid;
+    place-items:center;
+
+    font-size:30px;
+
+}
+
+.confirm-icon.danger{
+
+    background:color-mix(in srgb,var(--danger) 12%,transparent);
+
+    color:var(--danger);
+
+}
+
+.confirm-modal h3{
+
+    margin:0;
+
+    font-size:22px;
+
+}
+
+.confirm-modal p{
+
+    margin:12px 0 24px;
+
+    color:var(--text-muted);
+
+    line-height:1.55;
+
+}
+
+.confirm-actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.confirm-actions button{
+
+    flex:1;
+
+}
+
+.btn-danger{
+
+    background:var(--danger);
+
+    color:#fff;
+
+    border:none;
+
+}
+
+.btn-danger:hover{
+
+    filter:brightness(.96);
+
 }

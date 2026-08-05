@@ -215,6 +215,29 @@ export async function loginVendor(event){
     window.go("my");
 }
 
+//remove vendor account and all associated data
+export function deleteVendor(){
+    showConfirmModal({
+        title:"Delete Account?",
+        message:"Your account, vendor profile, listings and saved information will be permanently deleted. This action cannot be undone.",
+        icon:"trash-2",
+        danger:true,
+        confirmText:"Delete",
+        onConfirm(){
+            console.log("Delete confirmed.");
+            // TODO: deleteVendor()
+
+        }
+    });
+}
+// Mock only for now
+export function confirmDeleteMock(){
+  closeModal();
+
+  // Replace with your toast component later
+  console.log('Delete vendor confirmed (mock)');
+}
+
 // Ensure the user is logged in before showing the add business screen.
 export async function openAddListing() {
     const { data: { user } } = await supabase.auth.getUser();

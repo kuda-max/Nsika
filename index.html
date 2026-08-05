@@ -259,6 +259,18 @@ rel="stylesheet">
           </div>
         </div>
       </div>
+
+      <div class="settings-item danger" onclick="deleteVendor()">
+  <div class="settings-item-left">
+    <div class="settings-item-icon danger">
+      <i data-lucide="trash-2"></i>
+    </div>
+    <div>
+      <div class="settings-label danger">Delete Account</div>
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 
@@ -414,48 +426,77 @@ rel="stylesheet">
       <i data-lucide="store"></i>
       <span>Business yanga</span>
     </button>
-    <button class="nav-item" onclick="go('settings')" id="nav-settings">
-      <i data-lucide="settings"></i>
-      <span>Settings</span>
-    </button>
+
       <button class="nav-item" onclick="handleNavWidth()" id="nav-toggle">
       <i data-lucide="arrow-right"></i>
       <span></span>
     </button>
+          <button class="nav-item" onclick="showToast('Analytics coming soon')" id="nav-analytics">
+      <i data-lucide="chart-line"></i>
+      <span></span>
+    </button>
+          <button class="nav-item" onclick="showToast('about us coming soon')" id="nav-about">
+      <i data-lucide="info"></i>
+      <span></span>
+    </button> 
+       <button class="nav-item" onclick="go('settings')" id="nav-settings">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </button>
   </nav>
 
   <!-- Edit Sheet -->
-  <div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
-  <div class="sheet" id="edit-sheet" style="display: none;">
-    <div class="sheet-handle"></div>
-    <h3>Edit Business</h3>
-    <p class="subtitle">Update your details so customers reach you.</p>
-    <form class="form" onsubmit="saveEdit(event)">
+<div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
+<div class="sheet" id="edit-sheet">
+  <div class="sheet-handle"></div>
+  <form class="form" onsubmit="saveEdit(event)">
+    <div class="sheet-header">
+      <div class="sheet-header-icon"><i data-lucide="pencil"></i></div>
+      <div class="sheet-header-text">
+        <h3>Edit Business</h3>
+        <p class="subtitle">Update your details so customers reach you.</p>
+      </div>
+      <button type="button" class="sheet-close" onclick="closeEdit()" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="sheet-body">
       <input type="hidden" name="id" id="edit-id">
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" name="name" id="edit-name" required>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" id="edit-name" required>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="phone" id="edit-phone" required>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="tel" name="phone" id="edit-phone" required>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="tel" name="whatsapp" id="edit-whatsapp">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" id="edit-category" required></select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>WhatsApp</label>
-        <input type="tel" name="whatsapp" id="edit-whatsapp">
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Town</label>
+          <input type="text" name="town" id="edit-town" required>
+        </div>
+        <div class="form-group">
+          <label>Area</label>
+          <input type="text" name="area" id="edit-area">
+        </div>
       </div>
-      <div class="form-group">
-        <label>Category</label>
-        <select name="category" id="edit-category" required></select>
-      </div>
-      <div class="form-group">
-        <label>Town</label>
-        <input type="text" name="town" id="edit-town" required>
-      </div>
-      <div class="form-group">
-        <label>Area</label>
-        <input type="text" name="area" id="edit-area">
-      </div>
+
       <div class="form-group">
         <label>Description</label>
         <textarea name="description" id="edit-description" required></textarea>
@@ -466,19 +507,66 @@ rel="stylesheet">
         <label>Add Photos</label>
         <input type="file" id="edit-photo-input" accept="image/*" multiple>
       </div>
-      <button type="submit" class="btn btn-primary btn-full">Save Changes</button>
-      <button type="button" class="btn btn-outline btn-full" style="margin-top:8px; color:var(--danger); border-color:var(--border);" onclick="deleteListing()">Delete Listing</button>
-    </form>
-  </div>
+    </div>
+
+    <div class="sheet-footer">
+      <button type="button" class="btn btn-outline" style="color:var(--danger); border-color:var(--border);" onclick="deleteListing()">Delete Listing</button>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
 
   <!-- Profile Sheet -->
   <div id="profile-overlay" class="sheet-overlay" onclick="closeProfileEdit()"></div>
-  <div id="profile-sheet" class="sheet">
-    <div class="sheet-handle"></div>
-    <h3 id="profile-sheet-title"></h3>
-    <p class="subtitle" id="profile-sheet-subtitle"></p>
-    <div id="profile-sheet-body"></div>
+<div id="profile-sheet" class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-header-icon">
+      <i data-lucide="user" id="profile-sheet-icon"></i>
+    </div>
+    <div class="sheet-header-text">
+      <h3 id="profile-sheet-title"></h3>
+      <p class="subtitle" id="profile-sheet-subtitle"></p>
+    </div>
+    <button type="button" class="sheet-close" onclick="closeProfileEdit()" aria-label="Close">
+      <i data-lucide="x"></i>
+    </button>
   </div>
+  <div class="sheet-body" id="profile-sheet-body"></div>
+</div>
+
+<!-- Reusable Modal -->
+  <div class="modal-backdrop" id="confirm-modal">
+
+    <div class="confirm-modal">
+
+        <div class="confirm-icon danger">
+            <i data-lucide="trash-2"></i>
+        </div>
+
+        <h3 id="confirm-title">Delete Vendor?</h3>
+
+        <p id="confirm-message">
+            This action cannot be undone.
+        </p>
+
+        <div class="confirm-actions">
+
+            <button class="btn btn-outline" onclick="closeConfirmModal()">
+                Cancel
+            </button>
+
+            <button class="btn btn-danger" id="confirm-ok">
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 
 </div>
 

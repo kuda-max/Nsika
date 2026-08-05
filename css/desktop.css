@@ -220,6 +220,9 @@
   z-index: 96; /* one above .bottom-nav's z-index: 95 */
   flex: none;
 }
+#nav-toggle,#nav-analytics,#nav-about{
+  display: flex;
+}
 #nav-toggle:hover {
   background: var(--primary-soft);
   color: var(--primary);
@@ -510,11 +513,7 @@
 
   /* ============================================================
      8. Vendor cards — rich, image-forward feed cards
-     ============================================================ */
-  /* NOTE: cards.css is linked AFTER desktop.css in index.html, so its
-     mobile row rules would otherwise win. We scope with #app here to
-     raise specificity and guarantee the desktop box layout applies on
-     both the Home and Explore (and My Business) grids. */
+     ============================================================ */ 
   #app .vendor-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -744,34 +743,37 @@
   /* ============================================================
      12. Sheets → centered modal dialogs
      ============================================================ */
-  .sheet-overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-  }
-  .sheet {
-    position: relative;
-    inset: auto;
-    width: 92%;
-    max-width: 560px;
-    max-height: 86vh;
-    margin: auto;
-    overflow-y: auto;
-    transform: scale(0.96);
-    opacity: 0;
-    border-radius: var(--radius-lg, 16px);
-    padding: var(--space-6, 24px);
-    background: var(--surface, #fff);
-    box-shadow: var(--shadow-lg, 0 24px 60px rgba(0, 0, 0, 0.28));
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-  .sheet-overlay.open .sheet,
-  .sheet.open {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .sheet-handle { display: none; }
+.sheet-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  /* flex centering removed — it did nothing for a sibling .sheet anyway */
+}
+
+.sheet {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 92%;
+  max-width: 560px;
+  max-height: 86vh;
+  margin: 0;
+  overflow-y: auto;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-6, 24px);
+  background: var(--surface, #fff);
+  box-shadow: var(--shadow-lg, 0 24px 60px rgba(0, 0, 0, 0.28));
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  z-index: 121; /* one above .sheet-overlay's 110, so it renders on top even as a sibling */
+}
+#edit-sheet{
+  min-height: 70vh;
+} 
+.sheet.open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.sheet-handle { display: none; }
 
   /* ============================================================
      13. Shared polish

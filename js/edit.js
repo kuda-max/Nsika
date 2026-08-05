@@ -8,6 +8,7 @@ import { showLoader, hideLoader } from "./utils.js";
 import { renderEditImages } from "./image-manager.js";
 import { requireInternet } from './network.js';
 import { pulseCard, animateCardOut, markCardSyncing, clearCardSyncing, resetSheetStyles } from './animations.js';
+import { lockBodyScroll, unlockBodyScroll } from './utils.js';
 
 // Helper to return the currently authenticated user object.
 export async function getUser(){
@@ -54,12 +55,14 @@ export async function openEdit(id){
     renderEditImages(v);
     $('#edit-overlay').classList.add('open');
     $('#edit-sheet').classList.add('open');
+    lockBodyScroll();
 }
 
 // Close the edit overlay and sheet to hide the edit UI.
 export function closeEdit(){
 	$('#edit-overlay').classList.remove('open');
 	$('#edit-sheet').classList.remove('open');
+    unlockBodyScroll();
 }
 
 // Persist edits for a business listing, validating ownership first.

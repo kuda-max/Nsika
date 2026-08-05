@@ -1,3 +1,4 @@
+import { state } from './state.js';
 // Simple DOM query helper: selects the first matching element for the given CSS selector.
 export const $ = s => document.querySelector(s);
 
@@ -7,7 +8,18 @@ export const esc = s => { const d=document.createElement('div'); d.textContent=s
 // Generates a short unique identifier using a random value and current timestamp.
 export const uid = () => Math.random().toString(36).slice(2)+Date.now().toString(36);
 
-import { state } from './state.js';
+//a reusable modal
+export function openModal(){
+  const modal = document.getElementById('app-modal');
+  modal.hidden = false;
+
+  // Re-render Lucide icons inside the modal
+  if(window.lucide) lucide.createIcons();
+}
+
+export function closeModal(){
+  document.getElementById('app-modal').hidden = true;
+}
 
 // Returns a stable owner identifier kept in localStorage.
 // If the ID does not exist yet, a new one is generated and stored.
@@ -161,7 +173,28 @@ export function handleNavWidth(){
                 );
             }
         });
-
     }
 
+}
+
+// Locks/unlocks background scrolling while a sheet is open. Uses a
+// counter, not a boolean, so if two sheets could ever be triggered in
+// quick succession, closing one doesn't prematurely unlock scroll
+// while another is still meant to be open.
+let openSheetCount = 0;
+
+export function lockBodyScroll(){
+    openSheetCount++;
+    if(openSheetCount === 1){
+        const activeScreen = document.querySelector('.screen.active');
+        if(activeScreen) activeScreen.style.overflow = 'hidden';
+    }
+}
+
+export function unlockBodyScroll(){
+    openSheetCount = Math.max(0, openSheetCount - 1);
+    if(openSheetCount === 0){
+        const activeScreen = document.querySelector('.screen.active');
+        if(activeScreen) activeScreen.style.overflow = '';
+    }
 }

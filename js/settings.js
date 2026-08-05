@@ -2,7 +2,7 @@ import { supabase } from "./supabase.js";
 import { showLoader, hideLoader } from "./utils.js";
 import { showToast } from "./ui.js";
 import {loadProfile, isLoggedIn} from "./auth.js";
-import { $ } from "./utils.js";
+import { $, lockBodyScroll, unlockBodyScroll } from "./utils.js";
 import { state } from "./state.js";
 import { resetSheetStyles } from "./animations.js";
 
@@ -29,7 +29,7 @@ export function closeProfileEdit(){
 
     $("#profile-overlay").classList.remove("open");
     $("#profile-sheet").classList.remove("open");
-
+    unlockBodyScroll();
 }
 
 export async function saveProfile(event){
@@ -82,7 +82,7 @@ export async function saveProfile(event){
     }
 
     hideLoader();
-
+    unlockBodyScroll();
 }
 
 let guestIdentity = null;
@@ -131,7 +131,7 @@ export async function openProfileEdit(){
     const profile = await loadProfile();
 
     if(!profile) return;
-
+    $("#profile-sheet-icon").setAttribute("data-lucide", "user");
     $("#profile-sheet-title").textContent =
         "Personal Information";
 
@@ -180,11 +180,12 @@ export async function openProfileEdit(){
 
     $("#profile-overlay").classList.add("open");
     $("#profile-sheet").classList.add("open");
-
+    lockBodyScroll();
 }
 
 export async function openPasswordEdit(){
     resetSheetStyles($('#edit-sheet'), $('#edit-overlay'));
+    $("#profile-sheet-icon").setAttribute("data-lucide", "lock");
     $("#profile-sheet-title").textContent =
         "Chiteteo ndi Password";
 
@@ -245,7 +246,7 @@ export async function openPasswordEdit(){
 
     $("#profile-overlay").classList.add("open");
     $("#profile-sheet").classList.add("open");
-
+    lockBodyScroll();
 }
 
 export async function changePassword(event){
@@ -305,7 +306,7 @@ export async function changePassword(event){
         hideLoader();
 
     }
-
+    unlockBodyScroll();
 }
 
 export function togglePassword(id, button){

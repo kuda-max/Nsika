@@ -12,6 +12,7 @@ import * as imageManager from './js/image-manager.js';
 import * as settings from './js/settings.js';
 import * as toast from './js/ui.js';
 import * as utils from './js/utils.js';
+import * as modal from './js/modal.js';
 
 // Expose functions used by inline handlers in the HTML (keep behavior unchanged)
 window.onSearch = search.onSearch;
@@ -20,12 +21,18 @@ window.handlePhoto = forms.handlePhoto;
 window.submitVendor = forms.submitVendor;
 window.registerVendor = forms.registerVendor;
 window.loginVendor = forms.loginVendor;
+window.deleteVendor = forms.deleteVendor;
 window.logout = auth.logout;
 window.openExploreAll = search.openExploreAll;
 window.pickCategory = search.pickCategory;
 window.populateSelect = forms.populateSelect;
 window.openAddListing = forms.openAddListing;
 window.openMyBusiness = vendor.openMyBusiness;
+
+window.openModal = modal.openModal;
+window.closeModal = modal.closeModal;
+window.showConfirmModal = modal.showConfirmModal;
+window.closeConfirmModal = modal.closeConfirmModal;
 
 window.go = nav.go;
 window.back = nav.back;
