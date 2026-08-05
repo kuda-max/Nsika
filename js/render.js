@@ -58,7 +58,7 @@ export function vCard(v, editable = false){
 				${editable ? '' : `
 				<div class="v-actions">
 					<a class="btn btn-primary" href="tel:${v.phone}"><i data-lucide="phone"></i> Imbani</a>
-					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i> Message pa Whatsapp</a>
+					<a class="btn btn-outline" href="https://wa.me/${wa}" target="_blank"><i data-lucide="message-circle"></i>Whatsapp</a>
 				</div>`}
 			</div>
 		</div>`;

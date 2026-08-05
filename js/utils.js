@@ -108,55 +108,60 @@ export function refreshIcons(){
     lucide.createIcons();
 }
 
-// motion.js
+export function handleNavWidth(){
 
-export function animateCards() {
-    const cards = document.querySelectorAll(".v-card", ".cat-card");
-    cards.forEach((card, i) => {
-        card.animate(
+    const nav = document.querySelector(".bottom-nav");
+    if(!nav) return;
+
+    const opening = !nav.classList.contains("expanded");
+
+    nav.classList.toggle("expanded");
+
+    const icon = document.querySelector("#nav-toggle svg");
+
+    if(icon){
+
+        // Phase 1: shrink the current icon out.
+        const shrink = icon.animate(
             [
-                {
-                    opacity: 0,
-                    transform: "translateY(12px)"
-                },
-                {
-                    opacity: 1,
-                    transform: "translateY(0)"
-                }
+                { transform: "scale(1) rotate(0deg)", opacity: 1 },
+                { transform: "scale(0.6) rotate(-45deg)", opacity: 0 }
             ],
             {
-                duration: 250,
-                delay: i * 30,
-                easing: "ease-out",
-                fill: "both"
+                duration: 140,
+                easing: "ease-in",
+                fill: "forwards"
             }
         );
-    });
-}
 
-export function animateSettings(){
-    const items = document.querySelectorAll(".settings-item");
-    items.forEach((item, index)=>{
-        item.animate(
-            [
-                {
-                    opacity:0,
-                    transform:"translateY(10px)"
-                },
+        shrink.finished.then(() => {
 
-                {
-                    opacity:1,
-                    transform:"translateY(0)"
-                }
+            icon.setAttribute(
+                "data-lucide",
+                opening ? "arrow-left" : "arrow-right"
+            );
 
-            ],
+            refreshIcons();
 
-            {
-                duration:250,
-                delay:index*30,
-                easing:"ease-out",
-                fill:"both"
+            // Phase 2: grow the freshly-swapped icon back in. Query
+            // again — refreshIcons() replaced the DOM node, so `icon`
+            // is now stale and animating it further would do nothing.
+            const newIcon = document.querySelector("#nav-toggle svg");
+            if(newIcon){
+                newIcon.animate(
+                    [
+                        { transform: "scale(0.6) rotate(45deg)", opacity: 0 },
+                        { transform: "scale(1) rotate(0deg)", opacity: 1 }
+                    ],
+                    {
+                        duration: 180,
+                        easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+                        fill: "forwards"
+                    }
+                );
             }
-        );
-    });
+        });
+
+    }
+
 }

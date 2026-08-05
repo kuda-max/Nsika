@@ -3,6 +3,21 @@ import { $ } from './utils.js';
 import { renderHome, renderExplore } from './render.js';
 import { debounce ,syncChipIndicator} from './animations.js';
 
+export function currentSearchInputId(){
+    return state.currentScreen === 'explore' ? 'explore-search' : 'home-search';
+}
+
+export function initTopbarSearch(){
+    const topbarInput = document.getElementById('topbar-search');
+    if(!topbarInput) return;
+
+    topbarInput.addEventListener('input', () => {
+        const target = document.getElementById(currentSearchInputId());
+        if(target) target.value = topbarInput.value;
+        onSearch();
+    });
+}
+
 export const onSearch = debounce(() => {
     if (state.currentScreen === 'explore') renderExplore();
     else renderHome();

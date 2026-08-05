@@ -8,6 +8,8 @@ import { closeProfileEdit } from './settings.js';
 import {$} from './utils.js';
 import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable } from './animations.js';
 import { requestUserLocation } from './map.js';
+import {initTopbarSearch} from './search.js';
+import { go } from './navigation.js';
 
 // Application initialization routine.
 // Loads data, prepares the signup category select, renders initial screens,
@@ -28,6 +30,7 @@ window.addEventListener("online", ()=>{
 document.querySelectorAll('.chip-row').forEach(row => syncChipIndicator(row));
 document.querySelectorAll('form.form').forEach(form => attachShakeValidation(form));
 initStickySearchShadow();
+initTopbarSearch();
 }
 
 function dteststuff(){
@@ -106,6 +109,7 @@ export async function init(){
     }
     uiStuff();
     requestUserLocation();
+    go('home');
 }
 
 

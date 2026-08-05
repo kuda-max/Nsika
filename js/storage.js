@@ -8,8 +8,8 @@ import {$} from "./utils.js";
 
 // Load the latest businesses and categories from Supabase into the shared state.
 export async function load() {
-    renderSkeletonCards($('#home-list'), 5);
-    renderSkeletonCards($('#explore-list'), 6);
+    renderSkeletonCards($('#home-list'), 7);
+    renderSkeletonCards($('#explore-list'), 8);
 
     try {
         const [businessesResult, categoriesResult] = await Promise.all([

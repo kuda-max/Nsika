@@ -16,7 +16,9 @@
   z-index: 100;
 }
 .topbar .title { font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
-
+.topbar-search {
+  display: none; /* only ever shown on desktop, for screens with search */
+}
 /* Icon Buttons */
 .icon-btn {
   width: 44px; height: 44px; border-radius: var(--radius);
@@ -53,7 +55,9 @@
   gap: 4px;
   z-index: 100;
 }
-
+#nav-toggle{
+  display: none;
+}
 .nav-item {
   border: none;
   background: none;

@@ -4,6 +4,7 @@ import { renderHome, renderExplore, renderMy, renderProfile } from './render.js'
 import { initSignupMap } from './map.js';
 import { requireInternet } from './network.js'
 import { animateSettings, debounce, syncChipIndicator} from './animations.js';
+import { currentSearchInputId } from './search.js';
 
 // Screen identifiers used throughout the navigation system.
 export const screens = {
@@ -72,6 +73,17 @@ export function go(name){
     // (display:none via .screen) when we last measured it — those rects
     // are zero-width, so resync now that it's actually visible.
     $('#screen-'+name).querySelectorAll('.chip-row').forEach(row => syncChipIndicator(row));
+
+    const topbarSearchWrap = $('#topbar-search-wrap');
+const topbarSearchInput = $('#topbar-search');
+const showsSearch = (name === 'home' || name === 'explore');
+
+topbarSearchWrap.classList.toggle('screen-has-search', showsSearch);
+
+if(showsSearch){
+    const sourceInput = document.getElementById(currentSearchInputId());
+    topbarSearchInput.value = sourceInput ? sourceInput.value : '';
+}
   };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -98,6 +110,4 @@ export function back(){
   } else {
     go('home');
   }
-  const pauseBtn = $('#header-pause');
-  if(pauseBtn) pauseBtn.style.display = 'none';
 }

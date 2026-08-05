@@ -179,7 +179,7 @@ export async function reverseGeocode(lat,lng){
 
 // Straight-line distance underestimates real travel distance since
 // roads aren't straight. This rough multiplier approximates road distance.
-const DETOUR_FACTOR = 1.3;
+const DETOUR_FACTOR = 1.22;
 
 export function estimatedRoadDistanceKm(lat1, lng1, lat2, lng2){
     return distanceKm(lat1, lng1, lat2, lng2) * DETOUR_FACTOR;

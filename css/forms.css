@@ -140,14 +140,13 @@ textarea { resize: vertical; min-height: 90px; }
 .chip-indicator {
   position: absolute;
   left: 0;
-  top: var(--space-3);
-  height: 38px;
+  top: 0;
   border-radius: var(--radius-full);
   background: var(--primary-light);
   box-shadow: var(--shadow-sm);
   z-index: 0;
   pointer-events: none;
-  will-change: transform, width;
+  will-change: transform, width, height;
   transition: none;
 }
 /* Custom Switch Toggle */

@@ -27,9 +27,8 @@ rel="stylesheet">
 <link rel="stylesheet" href="css/screens.css">
 <link rel="stylesheet" href="css/forms.css">
 <link rel="stylesheet" href="css/overlays.css">
-<link rel="stylesheet" href="css/desktop.css">
 <link rel="stylesheet" href="css/cards.css">
-
+<link rel="stylesheet" href="css/desktop.css">
 <link rel="icon" href="/assets/icons/nsika192.png" type="image/png">
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
@@ -49,12 +48,7 @@ rel="stylesheet">
 
   <!-- Screens -->
 
-  <div id="offline-screen" class="offline-screen hidden">
-    <i data-lucide="wifi-off"></i>
-    <h2>You're offline</h2>
-    <p>Check your internet connection and try again.</p>
-    <button class="btn btn-primary" onclick="retryConnection()">Try Again</button>
-  </div>
+
 
   <div id="screen-home" class="screen active">
 <div class="search-wrap">
@@ -374,6 +368,15 @@ rel="stylesheet">
     <i data-lucide="arrow-left"></i>
   </button>
   <div class="title" id="header-title">Nsika</div>
+
+  <div class="topbar-search" id="topbar-search-wrap">
+    <i data-lucide="search"></i>
+    <input type="text" id="topbar-search" placeholder="Setchani ma business…">
+    <button class="topbar-search-filter" id="topbar-filter-btn" aria-label="Filters">
+      <i data-lucide="sliders-horizontal"></i>
+    </button>
+  </div>
+
   <div class="topbar-actions">
     <button class="icon-btn" id="header-edit" onclick="headerAction()" style="display:none;">
       <i data-lucide="pencil"></i>
@@ -415,11 +418,15 @@ rel="stylesheet">
       <i data-lucide="settings"></i>
       <span>Settings</span>
     </button>
+      <button class="nav-item" onclick="handleNavWidth()" id="nav-toggle">
+      <i data-lucide="arrow-right"></i>
+      <span></span>
+    </button>
   </nav>
 
   <!-- Edit Sheet -->
   <div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
-  <div class="sheet" id="edit-sheet">
+  <div class="sheet" id="edit-sheet" style="display: none;">
     <div class="sheet-handle"></div>
     <h3>Edit Business</h3>
     <p class="subtitle">Update your details so customers reach you.</p>

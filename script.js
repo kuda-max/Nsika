@@ -58,7 +58,7 @@ window.isLoggedIn = auth.isLoggedIn;
 window.showOffline = utils.showOffline;
 window.hideOffline = utils.hideOffline;
 
-
+window.handleNavWidth = utils.handleNavWidth;
 
 window.retryConnection = render.retryConnection;
 
