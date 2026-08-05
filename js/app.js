@@ -6,7 +6,7 @@ import { state } from './state.js';
 import { closeEdit } from './edit.js';
 import { closeProfileEdit } from './settings.js';
 import {$} from './utils.js';
-import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable } from './animations.js';
+import {syncChipIndicator,attachShakeValidation, initStickySearchShadow, makeSheetDraggable,preloadEmptyStateAnimation } from './animations.js';
 import { requestUserLocation } from './map.js';
 import {initTopbarSearch} from './search.js';
 import { go } from './navigation.js';
@@ -31,6 +31,7 @@ document.querySelectorAll('.chip-row').forEach(row => syncChipIndicator(row));
 document.querySelectorAll('form.form').forEach(form => attachShakeValidation(form));
 initStickySearchShadow();
 initTopbarSearch();
+preloadEmptyStateAnimation();
 }
 
 function dteststuff(){

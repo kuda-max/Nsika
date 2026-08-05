@@ -436,16 +436,63 @@ export function resetSheetStyles(sheetEl, overlayEl){
     if(overlayEl) overlayEl.style.opacity = '';
 }
 
-export function handleEmptyStateAnimation(el){
-const empty = document.querySelector(el);
-if(empty){
-    lottie.loadAnimation({
-        container: empty,
-        renderer: "svg",
-        loop: true,
-        autoplay: true,
-        path: "./assets/not-found.json"
+// Cache animation JSON in memory so we only ever fetch it once,
+// instead of re-fetching on every empty-state render.
+let notFoundAnimationData = null;
+let notFoundAnimationPromise = null;
 
-    });
+function loadNotFoundAnimationData(){
+    if(notFoundAnimationData) return Promise.resolve(notFoundAnimationData);
+    if(notFoundAnimationPromise) return notFoundAnimationPromise;
+
+    notFoundAnimationPromise = fetch('./assets/not-found.json')
+        .then(res => res.json())
+        .then(data => {
+            notFoundAnimationData = data;
+            return data;
+        });
+
+    return notFoundAnimationPromise;
 }
+
+//app init to start the fetch early,
+// so by the time someone actually hits an empty state, the JSON
+// is already cached and ready — removes the network wait entirely.
+export function preloadEmptyStateAnimation(){
+    loadNotFoundAnimationData();
+}
+
+export async function handleEmptyStateAnimation(el){
+    const empty = document.querySelector(el);
+    if(!empty) return;
+
+    // Destroy any previous instance living in this container before
+    // creating a new one — prevents stacked/duplicate animations.
+    if(empty._lottieInstance){
+        empty._lottieInstance.destroy();
+        empty._lottieInstance = null;
+    }
+
+    const animationData = await loadNotFoundAnimationData();
+
+    // Wait two animation frames before initializing — gives the browser
+    // a chance to finish layout/paint (screen transition, view-transition,
+    // etc.) so the container has real dimensions when Lottie measures it.
+    // A single rAF often isn't enough on mobile; double-rAF reliably
+    // lands after the next paint.
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            // Bail if the element was removed from the DOM in the
+            // meantime (e.g. user navigated away or searched again fast).
+            if(!document.body.contains(empty)) return;
+
+            empty._lottieInstance = lottie.loadAnimation({
+                container: empty,
+                renderer: "svg",
+                loop: true,
+                autoplay: true,
+                animationData
+            });
+        });
+    });
 }
