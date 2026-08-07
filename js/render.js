@@ -1,11 +1,12 @@
 import { state } from './state.js';
-import { $, esc, makePlaceholder, timeAgo,isOwner, refreshIcons} from './utils.js';
+import { $, esc, makePlaceholder, timeAgo, refreshIcons} from './utils.js';
 import { showToast } from './ui.js';
 import { showLoader, hideLoader, showOffline, hideOffline } from './utils.js';
 import { load } from "./storage.js";
 import { animateCards, animateImage, animateEmptyState, animateCardsOnScroll, handleEmptyStateAnimation } from "./animations.js";
 import { distanceKm, formatDistance, estimatedRoadDistanceKm } from './map.js';
 import { supabase } from './supabase.js';
+import { canEditBusiness } from './permissions.js';
 
 // Render a single category card used in the category grid.
 // Clicking the card calls pickCategory with the category ID.
@@ -27,7 +28,7 @@ export function vCard(v, editable = false){
     const cat = {name: v.categoryName || 'Vendor'};
     const cover = v.images?.find(img => img.is_cover);
 
-	const owner = isOwner(v);
+	const owner = canEditBusiness(v);
     const img =
         cover?.image_url ||
         v.photoUrls[0] ||
@@ -273,7 +274,7 @@ export function renderProfile(id){
         return;
     }
 
-    const owner = isOwner(v);
+    const owner = canEditBusiness(v);
     const editBtn = $('#header-edit');
     if(editBtn){
         editBtn.style.display = owner ? '' : 'none';
