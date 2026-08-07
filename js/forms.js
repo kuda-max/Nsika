@@ -3,10 +3,10 @@ import { uid, makePlaceholder, $, deleteProfile } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
 import { load } from "./storage.js";
-import { showLoader, hideLoader, } from "./utils.js";
-import { logout ,clearDeletedAccount, getCurrentUser } from "./auth.js";
+import { showLoader, hideLoader } from "./utils.js";
+import { logout ,clearDeletedAccount} from "./auth.js";
 import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
-import {loginUser, registerUser, deleteAuthUser } from "./services/authService.js";
+import {loginUser, registerUser, deleteAuthUser, getCurrentUser  } from "./services/authService.js";
 import {getMyBusiness,createBusiness,createBusinessImages,deleteBusiness} from "./services/businessService.js";
 import { uploadBusinessPhotos,deleteBusinessImages} from "./services/storageService.js";
 
@@ -47,7 +47,6 @@ export async function submitVendor(event) {
     event.preventDefault();
     showLoader("business yanu ikulowetsedwa mmakina athu...");
     const form = event.target;
-
     const user = await getCurrentUser();
 
     if (!user) {
@@ -260,15 +259,15 @@ export async function deleteVendor(){
         if(business){
 
             await deleteBusinessImages(business.id);
-            console.log("✓ Business images deleted");
+            console.log(" Business images deleted");
 
             await deleteBusiness(business.id);
-            console.log("✓ Business deleted");
+            console.log(" Business deleted");
 
         }
 
         await deleteAuthUser();
-        console.log("✓ Account deleted");
+        console.log(" Business account deleted");
 
         await clearDeletedAccount();
 
@@ -286,13 +285,13 @@ export function confirmDeleteMock(){
 
 // Ensure the user is logged in before showing the add business screen.
 export async function openAddListing() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (!user) {
-      showToast("Mukuyenera kupanga login kuti muyike business yanu.");
-      window.go("login");
-      return;
-    }
+if (!user) {
+    showToast("Mukuyenera kupanga login kuti muyike business yanu.");
+    window.go("login");
+    return;
+}
 
-    window.go("add");
+window.go("add");
 }

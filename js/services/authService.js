@@ -57,7 +57,14 @@ export async function getCurrentUser() {
         error
     } = await supabase.auth.getUser();
 
-    if (error) throw error;
+    if (error) {
+
+        if (error.name === "AuthSessionMissingError") {
+            return null;
+        }
+
+        throw error;
+    }
 
     return user;
 }

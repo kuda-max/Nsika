@@ -4,6 +4,7 @@ import { renderHome, renderMy } from "./render.js";
 import { showToast } from "./ui.js";
 import { state } from "./state.js";
 import { requireInternet } from "./network.js";
+import { getCurrentUser } from "./services/authService.js";
 
 // Sign up a new user with email and password via Supabase.
 // Returns the raw response so callers can handle success or error.
@@ -135,14 +136,4 @@ export async function isLoggedIn(){
 
     return !!(await getCurrentUser());
 
-}
-
-
-export async function getCurrentUser(){
-    if (!requireInternet(false)) return;
-    const {
-        data:{user}
-    } = await supabase.auth.getUser();
-
-    return user;
 }
