@@ -1,10 +1,7 @@
 import { state } from "./state.js";
 import { supabase } from "./supabase.js";
-import { showLoader, hideLoader } from "./utils.js";
-import { renderEditImages } from "./image-manager.js";
-import { showToast } from "./ui.js";
 import { renderSkeletonCards } from "./animations.js";
-import {$} from "./utils.js";
+import {$, hideLoader} from "./utils.js";
 
 // Load the latest businesses and categories from Supabase into the shared state.
 export async function load() {
@@ -109,40 +106,4 @@ export async function load() {
 export function save() {
     // Temporary.
     // We'll replace this when we build vendor creation/editing.
-}
-
-export async function deleteBusiness(businessId){
-
-    const { error, count } = await supabase
-        .from("businesses")
-        .delete({ count: "exact" })
-        .eq("id", businessId);
-
-    if(error) throw error;
-
-    if(count !== 1){
-        throw new Error("Business was not deleted.");
-    }
-
-}
-
-export async function deleteAuthUser(){
-
-    const { data, error } =
-        await supabase.functions.invoke("delete-user");
-
-    if(error) throw error;
-
-    if(!data?.success){
-        throw new Error("Account deletion failed.");
-    }
-
-    if(!data.deleted?.profile){
-        throw new Error("Profile was not deleted.");
-    }
-
-    if(!data.deleted?.auth){
-        throw new Error("Authentication account was not deleted.");
-    }
-
 }
