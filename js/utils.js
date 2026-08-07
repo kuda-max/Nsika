@@ -1,4 +1,6 @@
 import { state } from './state.js';
+import { supabase } from './supabase.js'
+
 // Simple DOM query helper: selects the first matching element for the given CSS selector.
 export const $ = s => document.querySelector(s);
 
@@ -8,18 +10,7 @@ export const esc = s => { const d=document.createElement('div'); d.textContent=s
 // Generates a short unique identifier using a random value and current timestamp.
 export const uid = () => Math.random().toString(36).slice(2)+Date.now().toString(36);
 
-//a reusable modal
-export function openModal(){
-  const modal = document.getElementById('app-modal');
-  modal.hidden = false;
 
-  // Re-render Lucide icons inside the modal
-  if(window.lucide) lucide.createIcons();
-}
-
-export function closeModal(){
-  document.getElementById('app-modal').hidden = true;
-}
 
 // Returns a stable owner identifier kept in localStorage.
 // If the ID does not exist yet, a new one is generated and stored.
@@ -198,3 +189,37 @@ export function unlockBodyScroll(){
         if(activeScreen) activeScreen.style.overflow = '';
     }
 }
+
+// Returns the currently logged-in user's business.
+export async function getMyBusiness(){
+
+    if(!state.user){
+        console.warn("No logged-in user");
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from("businesses")
+        .select("*")
+        .eq("owner_id", state.user.id)
+        .maybeSingle();
+
+    if(error) throw error;
+
+    return data;
+}
+export async function deleteProfile(){
+
+    const { error, count } = await supabase
+        .from("profiles")
+        .delete({ count: "exact" })
+        .eq("id", state.user.id);
+
+    if(error) throw error;
+
+    if(count !== 1){
+        throw new Error("Profile was not deleted.");
+    }
+
+}
+

@@ -759,6 +759,7 @@
   overflow-y: auto;
   transform: translate(-50%, -50%) scale(0.96);
   opacity: 0;
+  display: none;
   border-radius: var(--radius-lg, 16px);
   padding: var(--space-6, 24px);
   background: var(--surface, #fff);
@@ -770,6 +771,7 @@
   min-height: 70vh;
 } 
 .sheet.open {
+  display: block;
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }

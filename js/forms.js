@@ -1,10 +1,11 @@
 import { state } from './state.js';
-import { uid, makePlaceholder, $ } from './utils.js';
+import { uid, makePlaceholder, $, getMyBusiness, deleteProfile } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
-import { load } from "./storage.js";
+import { load, deleteBusinessImages, deleteBusiness, deleteAuthUser } from "./storage.js";
 import { supabase } from "./supabase.js";
-import { showLoader, hideLoader } from "./utils.js";
+import { showLoader, hideLoader, } from "./utils.js";
+import { logout ,clearDeletedAccount } from "./auth.js";
 import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
 
 // Populate a category select element with options from the loaded category list.
@@ -192,43 +193,86 @@ export async function registerVendor(event) {
 
 
 export async function loginVendor(event){
+
     event.preventDefault();
+
     const form = event.target;
+
     const email = form.email.value.trim();
     const password = form.password.value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+
+    const { error } = await supabase.auth.signInWithPassword({
         email,
         password
     });
 
+
     if(error){
+
         showToast("Takanika kukupangani sign-in chifukwa: " + error.message);
+
         shakeField(form.email);
         shakeField(form.password);
+
         return;
     }
 
-    const check = await supabase.auth.getSession();
-    showToast("Takulandilani!");
+
     await load();
+
+
+    if(!state.user){
+
+        console.error("Login successful but user state was not loaded");
+
+        showToast("Login failed. Please try again.");
+
+        return;
+    }
+
+
+    showToast("Takulandilani!");
+
     window.go("my");
+
 }
 
 //remove vendor account and all associated data
-export function deleteVendor(){
-    showConfirmModal({
-        title:"Delete Account?",
-        message:"Your account, vendor profile, listings and saved information will be permanently deleted. This action cannot be undone.",
-        icon:"trash-2",
-        danger:true,
-        confirmText:"Delete",
-        onConfirm(){
-            console.log("Delete confirmed.");
-            // TODO: deleteVendor()
+export async function deleteVendor(){
+
+    const confirmed = await showConfirmModal({
+        title: "Delete Account?",
+        message: "Your account, vendor profile, listings and saved information will be permanently deleted. This action cannot be undone.",
+        icon: "trash-2",
+        danger: true,
+        confirmText: "Delete"
+    });
+
+    if(!confirmed) return;
+
+    try{
+
+        const business = await getMyBusiness();
+
+        if(business){
+
+            await deleteBusinessImages(business.id);
+            console.log("✓ Business images deleted");
+
+            await deleteBusiness(business.id);
+            console.log("✓ Business deleted");
 
         }
-    });
+
+        await deleteAuthUser();
+        console.log("✓ Account deleted");
+
+        await clearDeletedAccount();
+
+    }catch(err){
+        console.error(err);
+    }
 }
 // Mock only for now
 export function confirmDeleteMock(){

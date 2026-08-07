@@ -50,7 +50,11 @@ export function renderEditImages(v){
 }
 
 export async function removeBusinessImage(imageId){
-    if(!confirm("Chichotsedwe chithunzichi?")){
+    if(!(await showConfirmModal({
+    title: "Chichotsedwe?",
+    message: "Chithunzichi chichotsedwa.",
+    confirmText: "Delete"
+    }))){
         return;
     }
 

@@ -65,9 +65,25 @@ export async function logout() {
     renderHome();
 
     await renderMy();
-
+    state.profile = null;
     window.go("home");
 
+}
+
+export async function clearDeletedAccount(){
+
+    await supabase.auth.signOut({
+        scope: "local"
+    });
+
+    state.user = null;
+    state.profile = null;
+
+    await load();
+
+    renderHome();
+
+    window.go("home");
 }
 
 export async function loadProfile(force = false){

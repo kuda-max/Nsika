@@ -8,10 +8,30 @@ import {$} from "./utils.js";
 
 // Load the latest businesses and categories from Supabase into the shared state.
 export async function load() {
+
     renderSkeletonCards($('#home-list'), 7);
     renderSkeletonCards($('#explore-list'), 8);
 
     try {
+
+        // Sync authenticated user state
+        const {
+            data: { user },
+            error: userError
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+            if(userError.name === "AuthSessionMissingError") {
+                state.user = null;
+                } else {
+            console.error("Failed to load user:", userError);
+            state.user = null;
+                }
+        } else {
+            state.user = user;
+        }
+
+
         const [businessesResult, categoriesResult] = await Promise.all([
             supabase
                 .from("businesses")
@@ -29,21 +49,26 @@ export async function load() {
                     )
                 `)
                 .order("created_at", { ascending: false }),
+
             supabase
                 .from("categories")
                 .select("*")
                 .order("name")
         ]);
 
+
         const { data, error } = businessesResult;
+
         if (error) {
             console.error("Failed to load businesses:", error);
             state.vendors = [];
             return;
         }
 
-        // Persist raw category data separately so the UI can render category filters.
+
+        // Persist category data
         const { data: categories, error: categoriesError } = categoriesResult;
+
         if (categoriesError) {
             console.error("Failed to load categories:", categoriesError);
             state.cats = [];
@@ -51,7 +76,8 @@ export async function load() {
             state.cats = categories;
         }
 
-        // Normalize the business rows into the app's vendor object shape.
+
+        // Normalize businesses
         state.vendors = data.map(v => ({
             id: String(v.id),
             ownerId: v.owner_id,
@@ -70,8 +96,12 @@ export async function load() {
             createdAt: new Date(v.created_at).getTime(),
             isActive: v.is_active
         }));
+
+
     } finally {
+
         hideLoader();
+
     }
 }
 
@@ -102,4 +132,82 @@ export async function deleteBusinessImage(imageUrl){
     if(dbError){
         throw dbError;
     }
+}
+
+// Deletes every image belonging to a business from Supabase Storage.
+export async function deleteBusinessImages(businessId){
+
+    // Get all image URLs for this business.
+    const { data: images, error } = await supabase
+        .from("business_images")
+        .select("image_url")
+        .eq("business_id", businessId);
+
+    if(error) throw error;
+
+    if(!images.length) return;
+
+    // Convert public URLs into storage paths.
+    const paths = images.map(img => {
+        const url = new URL(img.image_url);
+        return decodeURIComponent(
+            url.pathname.split("/business-images/")[1]
+        );
+    });
+
+    // Delete from the Storage bucket.
+    const { error: removeError } = await supabase
+        .storage
+        .from("business-images")
+        .remove(paths);
+
+    if(removeError) throw removeError;
+
+    // Delete the database records.
+    const { error: dbError, count } = await supabase
+        .from("business_images")
+        .delete({ count: "exact" })
+        .eq("business_id", businessId);
+
+    if(dbError) throw dbError;
+
+    if(count !== images.length){
+        throw new Error("Not all business image records were deleted.");
+}
+}
+
+export async function deleteBusiness(businessId){
+
+    const { error, count } = await supabase
+        .from("businesses")
+        .delete({ count: "exact" })
+        .eq("id", businessId);
+
+    if(error) throw error;
+
+    if(count !== 1){
+        throw new Error("Business was not deleted.");
+    }
+
+}
+
+export async function deleteAuthUser(){
+
+    const { data, error } =
+        await supabase.functions.invoke("delete-user");
+
+    if(error) throw error;
+
+    if(!data?.success){
+        throw new Error("Account deletion failed.");
+    }
+
+    if(!data.deleted?.profile){
+        throw new Error("Profile was not deleted.");
+    }
+
+    if(!data.deleted?.auth){
+        throw new Error("Authentication account was not deleted.");
+    }
+
 }

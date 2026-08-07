@@ -14,11 +14,12 @@ crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap"
 rel="stylesheet">
 
+<!-- Dependancies -->
 <script src="https://unpkg.com/lucide@latest"></script>
-<!-- confetti -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-<!-- lottie -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script src="js/dependancies/confetti.browser.min.js"></script>
+<script src="js/dependancies/lottie.min.js"></script>
+<link rel="stylesheet" href="css/leaflet.css">
+<script src="js/dependancies/leaflet.js"></script>
 
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/variables.css">
@@ -31,8 +32,7 @@ rel="stylesheet">
 <link rel="stylesheet" href="css/desktop.css">
 <link rel="icon" href="/assets/icons/nsika192.png" type="image/png">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 </head>
 <body>
 
@@ -447,7 +447,7 @@ rel="stylesheet">
 
   <!-- Edit Sheet -->
 <div class="sheet-overlay" id="edit-overlay" onclick="closeEdit()"></div>
-<div class="sheet" id="edit-sheet">
+<div class="sheet" id="edit-sheet" display="none">
   <div class="sheet-handle"></div>
   <form class="form" onsubmit="saveEdit(event)">
     <div class="sheet-header">
@@ -518,7 +518,7 @@ rel="stylesheet">
 
   <!-- Profile Sheet -->
   <div id="profile-overlay" class="sheet-overlay" onclick="closeProfileEdit()"></div>
-<div id="profile-sheet" class="sheet">
+<div id="profile-sheet" class="sheet" display="none">
   <div class="sheet-handle"></div>
   <div class="sheet-header">
     <div class="sheet-header-icon">

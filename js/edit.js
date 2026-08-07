@@ -153,7 +153,11 @@ export async function deleteListing(){
         return;
     }
 
-    if(!confirm("Business yanu ichotsedwe? mukatero sizitheka kuibwezeletsa.")){
+    if(!(await showConfirmModal({
+    title: "Delete Business?",
+    message: "Business yanu ichotsedwe? Mukatero sizitheka kuibwezeletsa.",
+    confirmText: "Delete"
+    }))){
         return;
     }
 
