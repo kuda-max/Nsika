@@ -1,19 +1,20 @@
-import { state } from "../state.js";
 import { supabase } from "../supabase.js";
+import { getCurrentUser } from "./authService.js";
 
 
 // Get the business owned by the currently logged-in user.
 export async function getMyBusiness() {
 
-    if (!state.user) {
-        console.warn("No logged-in user");
+    const user = await getCurrentUser();
+
+    if (!user) {
         return null;
     }
 
     const { data, error } = await supabase
         .from("businesses")
         .select("*")
-        .eq("owner_id", state.user.id)
+        .eq("owner_id", user.id)
         .maybeSingle();
 
     if (error) throw error;
