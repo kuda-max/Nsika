@@ -2,11 +2,11 @@ import { state } from './state.js';
 import { uid, makePlaceholder, $, getMyBusiness, deleteProfile } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
-import { load, deleteBusinessImages, deleteBusiness, deleteAuthUser } from "./storage.js";
-import { supabase } from "./supabase.js";
+import { load, deleteBusinessImages, deleteBusiness} from "./storage.js";
 import { showLoader, hideLoader, } from "./utils.js";
 import { logout ,clearDeletedAccount } from "./auth.js";
 import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
+import {loginUser, registerUser, deleteAuthUser } from "./services/authService.js";
 
 // Populate a category select element with options from the loaded category list.
 // The selected parameter controls which category option should be pre-selected.
@@ -159,15 +159,11 @@ export async function registerVendor(event) {
   const email = form.email.value;
   const password = form.password.value;
 
-  const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await registerUser(
     email,
     password,
-    options: {
-      data: {
-        full_name
-      }
-    }
-  });
+    full_name
+    );
 
   if (error) {
     console.error(error);
@@ -202,10 +198,10 @@ export async function loginVendor(event){
     const password = form.password.value;
 
 
-    const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
+    const { error } = await loginUser(
+    email,
+    password
+    );
 
 
     if(error){
