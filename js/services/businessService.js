@@ -1,34 +1,29 @@
+import { state } from "../state.js";
+import { supabase } from "../supabase.js";
 
-// Submit a new vendor listing. This function validates the current auth session,
-// inserts the business into Supabase, uploads photos, and links uploaded images.
-export async function submitVendor(event) {
-    event.preventDefault();
-    showLoader("business yanu ikulowetsedwa mmakina athu...");
-    const form = event.target;
 
-    const {
-        data: { user },
-        error: userError
-    } = await supabase.auth.getUser();
+// Get the business owned by the currently logged-in user.
+export async function getMyBusiness() {
 
-    if (userError || !user) {
-        hideLoader();
-        showToast("Mukuyenera kupanga login kuti muyike business yanu.");
-        return;
+    if (!state.user) {
+        console.warn("No logged-in user");
+        return null;
     }
 
-    const business = {
-        owner_id: user.id,
-        name: form.name.value,
-        phone: form.phone.value,
-        whatsapp: form.whatsapp.value || form.phone.value,
-        category_id: form.category.value,
-        description: form.description.value,
-        latitude: state.location.lat,
-        longitude: state.location.lng,
-        address: state.location.address,
-        town: state.location.town
-    };
+    const { data, error } = await supabase
+        .from("businesses")
+        .select("*")
+        .eq("owner_id", state.user.id)
+        .maybeSingle();
+
+    if (error) throw error;
+
+    return data;
+}
+
+
+// Create a new business.
+export async function createBusiness(business) {
 
     const { data, error } = await supabase
         .from("businesses")
@@ -36,107 +31,42 @@ export async function submitVendor(event) {
         .select()
         .single();
 
-    if (error) {
-        console.error("Business creation error:", error);
-        hideLoader();
-        showToast("Business yanu yakanika kuyikidwa chifukwa: " + error.message);
-        return;
-    }
+    if (error) throw error;
 
-    try {
-        const photoUrls = await uploadBusinessPhotos(data.id);
-        let imageRows = [];
-
-        if (photoUrls.length > 0) {
-            imageRows = photoUrls.map(url => ({
-                business_id: data.id,
-                image_url: url,
-                is_cover: photoUrls.indexOf(url) === 0
-            }));
-
-            const { error: imageError } = await supabase
-                .from("business_images")
-                .insert(imageRows);
-
-            if (imageError) {
-                console.error("Image DB error:", imageError);
-                showToast("Business yapangidwa,koma zithunzi zanu sizinaikidwe.");
-            }
-        }
-
-        // Merge the new vendor into local state directly instead of a
-        // full load() round-trip — makes it show up immediately.
-        const newVendor = {
-            id: String(data.id),
-            ownerId: data.owner_id,
-            name: data.name,
-            phone: data.phone,
-            whatsapp: data.whatsapp,
-            category: data.category_id,
-            categoryName: state.cats.find(c => c.id === data.category_id)?.name ?? "",
-            address: data.address,
-            town: data.town,
-            latitude: data.latitude,
-            longitude: data.longitude,
-            description: data.description,
-            photoUrls: photoUrls,
-            images: imageRows.map((row, i) => ({ image_url: row.image_url, is_cover: i === 0 })),
-            createdAt: new Date(data.created_at).getTime(),
-            isActive: data.is_active
-        };
-
-        state.vendors.unshift(newVendor);
-
-        hideLoader();
-        showToast("Business yanu ili live tsopano!");
-        confetti({
-            particleCount: 60,
-            spread: 90,
-            origin: { y: 0.6 },
-            colors: ['#B8623F', '#ffffff'] // match--primary + neutral
-        });
-        state.location = { lat: null, lng: null, address: "", town: "" };
-        go("home");
-
-        // New vendor lands first (state.vendors is createdAt-desc sorted
-        // and we unshifted) — animate just that card in.
-        requestAnimationFrame(() => {
-            const firstCard = document.querySelector('#home-list .v-card');
-            if(firstCard && firstCard.dataset.id === newVendor.id) animateCardIn(firstCard);
-        });
-    } catch (err) {
-        console.error("Photo upload error:", err);
-        hideLoader(); // was missing in the original — loader would hang forever on this path
-        showToast("Business yayikidwa, koma zithunzi zanu zakanika.");
-    }
+    return data;
 }
 
-//remove vendor account and all associated data
-export async function deleteVendor(){
 
-    const confirmed = await showConfirmModal({
-        title: "Delete Account?",
-        message: "Your account, vendor profile, listings and saved information will be permanently deleted. This action cannot be undone.",
-        icon: "trash-2",
-        danger: true,
-        confirmText: "Delete"
-    });
+// Save image records belonging to a business.
+export async function createBusinessImages(imageRows) {
 
-    if(!confirmed) return;
-
-    try{
-
-        const business = await getMyBusiness();
-
-        if(business){
-            await deleteBusinessImages(business.id);
-            await deleteBusiness(business.id);
-        }
-
-        await deleteAuthUser();
-        await clearDeletedAccount();
-
-    }catch(err){
-        console.error(err);
+    if (!imageRows.length) {
+        return [];
     }
+
+    const { data, error } = await supabase
+        .from("business_images")
+        .insert(imageRows)
+        .select();
+
+    if (error) throw error;
+
+    return data;
+}
+
+
+// Delete a business.
+export async function deleteBusiness(businessId) {
+
+    const { error, count } = await supabase
+        .from("businesses")
+        .delete({ count: "exact" })
+        .eq("id", businessId);
+
+    if (error) throw error;
+
+    if (count !== 1) {
+        throw new Error("Business was not deleted.");
+    }
+
 }

@@ -1,12 +1,14 @@
 import { state } from './state.js';
-import { uid, makePlaceholder, $, getMyBusiness, deleteProfile } from './utils.js';
+import { uid, makePlaceholder, $, deleteProfile } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
-import { load, deleteBusinessImages, deleteBusiness} from "./storage.js";
+import { load } from "./storage.js";
 import { showLoader, hideLoader, } from "./utils.js";
-import { logout ,clearDeletedAccount } from "./auth.js";
+import { logout ,clearDeletedAccount, getCurrentUser } from "./auth.js";
 import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
 import {loginUser, registerUser, deleteAuthUser } from "./services/authService.js";
+import {getMyBusiness,createBusiness,createBusinessImages,deleteBusiness} from "./services/businessService.js";
+import { uploadBusinessPhotos,deleteBusinessImages} from "./services/storageService.js";
 
 // Populate a category select element with options from the loaded category list.
 // The selected parameter controls which category option should be pre-selected.
@@ -46,12 +48,9 @@ export async function submitVendor(event) {
     showLoader("business yanu ikulowetsedwa mmakina athu...");
     const form = event.target;
 
-    const {
-        data: { user },
-        error: userError
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (userError || !user) {
+    if (!user) {
         hideLoader();
         showToast("Mukuyenera kupanga login kuti muyike business yanu.");
         return;
@@ -70,21 +69,28 @@ export async function submitVendor(event) {
         town: state.location.town
     };
 
-    const { data, error } = await supabase
-        .from("businesses")
-        .insert(business)
-        .select()
-        .single();
+    let data;
 
-    if (error) {
+    try {
+
+        data = await createBusiness(business);
+
+    } catch (error) {
+
         console.error("Business creation error:", error);
+
         hideLoader();
-        showToast("Business yanu yakanika kuyikidwa chifukwa: " + error.message);
+
+        showToast(
+            "Business yanu yakanika kuyikidwa chifukwa: " +
+            error.message
+        );
+
         return;
     }
 
     try {
-        const photoUrls = await uploadBusinessPhotos(data.id);
+        const photoUrls = await uploadBusinessPhotos(data.id, state.signupPhotos);
         let imageRows = [];
 
         if (photoUrls.length > 0) {
@@ -94,13 +100,13 @@ export async function submitVendor(event) {
                 is_cover: photoUrls.indexOf(url) === 0
             }));
 
-            const { error: imageError } = await supabase
-                .from("business_images")
-                .insert(imageRows);
-
-            if (imageError) {
-                console.error("Image DB error:", imageError);
-                showToast("Business yapangidwa,koma zithunzi zanu sizinaikidwe.");
+            try {
+             await createBusinessImages(imageRows);
+            } catch (error) {
+                console.error("Image DB error:", error);
+                showToast(
+                    "Business yapangidwa,koma zithunzi zanu sizinaikidwe."
+                );
             }
         }
 
@@ -289,29 +295,4 @@ export async function openAddListing() {
     }
 
     window.go("add");
-}
-
-// Upload all selected signup photos for a business to Supabase storage.
-// Returns an array of public URLs for the uploaded images.
-export async function uploadBusinessPhotos(businessId) {
-    const photoUrls = [];
-    for (let i = 0; i < state.signupPhotos.length; i++) {
-        const file = state.signupPhotos[i];
-        if (!file) continue;
-        const ext = file.name.split(".").pop() || "jpg";
-        const filename = `${crypto.randomUUID()}.${ext}`;
-        const path = `${businessId}/${filename}`;
-        const { error } = await supabase.storage
-            .from("business-images")
-            .upload(path, file);
-        if (error) {
-            console.error("Photo upload error:", error);
-            throw error;
-        }
-        const { data } = supabase.storage
-            .from("business-images")
-            .getPublicUrl(path);
-        photoUrls.push(data.publicUrl);
-    }
-    return photoUrls;
 }
