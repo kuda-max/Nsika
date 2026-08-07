@@ -1,5 +1,4 @@
 import { state } from './state.js';
-import { supabase } from './supabase.js'
 
 // Simple DOM query helper: selects the first matching element for the given CSS selector.
 export const $ = s => document.querySelector(s);
@@ -188,38 +187,5 @@ export function unlockBodyScroll(){
         const activeScreen = document.querySelector('.screen.active');
         if(activeScreen) activeScreen.style.overflow = '';
     }
-}
-
-// Returns the currently logged-in user's business.
-export async function getMyBusiness(){
-
-    if(!state.user){
-        console.warn("No logged-in user");
-        return null;
-    }
-
-    const { data, error } = await supabase
-        .from("businesses")
-        .select("*")
-        .eq("owner_id", state.user.id)
-        .maybeSingle();
-
-    if(error) throw error;
-
-    return data;
-}
-export async function deleteProfile(){
-
-    const { error, count } = await supabase
-        .from("profiles")
-        .delete({ count: "exact" })
-        .eq("id", state.user.id);
-
-    if(error) throw error;
-
-    if(count !== 1){
-        throw new Error("Profile was not deleted.");
-    }
-
 }
 

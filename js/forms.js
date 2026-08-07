@@ -1,9 +1,8 @@
 import { state } from './state.js';
-import { uid, makePlaceholder, $, deleteProfile } from './utils.js';
+import { uid, makePlaceholder, $,showLoader, hideLoader } from './utils.js';
 import { save } from './storage.js';
 import { showToast } from './ui.js';
 import { load } from "./storage.js";
-import { showLoader, hideLoader } from "./utils.js";
 import { logout ,clearDeletedAccount} from "./auth.js";
 import { shakeField, shakeSubmit, animateCardIn} from './animations.js';
 import {loginUser, registerUser, deleteAuthUser, getCurrentUser  } from "./services/authService.js";
